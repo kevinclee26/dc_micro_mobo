@@ -6,6 +6,7 @@ var hospitalQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/
 var primaryQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Health_WebMercator/MapServer/7/query?where=1%3D1&outFields=PrimaryCarePt.Shape,PrimaryCarePt.NAME,PrimaryCarePt.ADDRESS&outSR=4326&f=json';
 var votingQueryUrl='https://services.arcgis.com/neT9SoYxizqTHZPH/arcgis/rest/services/General_2020_Election_Vote_Centers_View/FeatureServer/0/query?where=1%3D1&outFields=LOCATION,StAddr,USER_VOTING_SPACE,STATUS,HOURS&outSR=4326&f=json';
 var tempQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/152/query?where=1%3D1&outFields=AIRTEMP,RELATIVEHUMIDITY,VISIBILITY,WINDSPEED&outSR=4326&f=json';
+var stationsEntQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/50/query?where=1%3D1&outFields=NAME,LINE,Shape,ADDRESS&outSR=4326&f=json';
 
 // Perform a GET request to the query URL
 d3.json(bikesQueryUrl).then(function(bikes_data) {
@@ -15,8 +16,10 @@ d3.json(bikesQueryUrl).then(function(bikes_data) {
 			d3.json(primaryQueryUrl).then(function(primaries_data){
 				d3.json(votingQueryUrl).then(function(vcenters_data){
 					d3.json(tempQueryUrl).then(function(temps_data){
-						buildTemp(temps_data['features']);
-						createMap(bikes_data['data']['bikes'], stations_data['features'], hospitals_data['features'], primaries_data['features'], vcenters_data['features']);	
+						d3.json(stationsEntQueryUrl).then(function(stnEnt_data){
+							buildTemp(temps_data['features']);
+							createMap(bikes_data['data']['bikes'], stations_data['features'], hospitals_data['features'], primaries_data['features'], vcenters_data['features'], stnEnt_data['features']);	
+						});
 					});
 				});
 			});
@@ -53,7 +56,7 @@ function buildTemp(temps){
 	});
 };
 
-function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
+function createMap(bikes, stations, hospitals, primaries, vcenters, stnEnts) {
 	// An array which will be used to store created cityMarkers
 	
 	// console.log(stationsFeatures.map(feature=>feature['properties']['NAME']))
@@ -104,6 +107,28 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 		style: feature=> ({color: feature['properties']['NAME'], weight: 8, opacity: 1})
 	});
 
+	var stnEntUnder=[];
+	var stnEntMarkers=[];
+	// console.log(stnEnts);
+	for (var i = 0; i < stnEnts.length; i++) {
+  		var myFilter = makeTweetFilter(stnEnts[i]['geometry']['y'], stnEnts[i]['geometry']['x'], 22.25);//circle.radiusInMi);
+		var tweetsWithinCircle = bikes.filter(myFilter);
+		// if (tweetsWithinCircle>0) {
+			// vcenterUnder+=1;
+		// };
+		// console.log(stnEnts[0]['attributes']['LINE'])
+		stnEntUnder.push(tweetsWithinCircle);
+	  	stnEntMarkers.push(
+	    	// L.circle([primaries[i]['geometry']['y'], primaries[i]['geometry']['x']]).bindPopup("<h6>" + primaries[i]['attributes']['PrimaryCarePt.NAME'] + "</h6><h6>"  + primaries[i]['attributes']['PrimaryCarePt.ADDRESS'] + "</h6><h6>" + tweetsWithinCircle.length + "</h6>")
+	    	L.circle([stnEnts[i]['geometry']['y'], stnEnts[i]['geometry']['x']], {radius: 800, stroke: false})
+	  	);
+	  	stnEntMarkers.push(
+	    	L.marker([stnEnts[i]['geometry']['y'], stnEnts[i]['geometry']['x']], {opacity: .5}).bindPopup("<h6>" + stnEnts[i]['attributes']['LINE'] + "</h6><h6>"  + stnEnts[i]['attributes']['ADDRESS'] + "</h6><h6>VPM: " + tweetsWithinCircle.length + "</h6>")
+	  	);
+	};
+	var stnEntLayer = L.layerGroup(stnEntMarkers);
+	// var stnEntLayer = L.layerGroup([stationLayer, stnEntMarkers]);
+
 	var primaryMarkers=[];
 	var primaryUnder=[]
 	for (var i = 0; i < primaries.length; i++) {
@@ -126,11 +151,6 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	};
 	var primaryLayer = L.layerGroup(primaryMarkers);
 
-	var stationLayer = L.geoJSON(stations, {
-		// onEachFeature: onEachFeature
-		style: feature=> ({color: feature['properties']['NAME'], weight: 8, opacity: 1})
-	});
-
 	var hospitalMarkers=[];
 	var hospitalUnder=[];
 	for (var i = 0; i < hospitals.length; i++) {
@@ -149,11 +169,6 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	  	);
 	};
 	var hospitalLayer = L.layerGroup(hospitalMarkers);
-
-	var stationLayer = L.geoJSON(stations, {
-		// onEachFeature: onEachFeature
-		style: feature=> ({color: feature['properties']['NAME'], weight: 8, opacity: 1})
-	});
 
 	var scooterIcon = L.icon({
 		iconUrl: 'assets/images/kick-scooter.png',
@@ -206,7 +221,8 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	// Create overlay object to hold our overlay layer
 	var overlayMaps = {
 		bikes: bikeLayer, 
-		stations: stationLayer, 
+		'stations path': stationLayer, 
+		stations: stnEntLayer,
 		hospitals: hospitalLayer, 
 		'primary care facilities': primaryLayer,
 		'voting centers': vcenterLayer
@@ -227,18 +243,18 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	collapsed: true
 	}).addTo(myMap);
 
-
 	var pctUnder=[hospitalUnder.map(hospital=>hospital.length).filter(count=>count==0).length/hospitalUnder.length, 
 			primaryUnder.map(primary=>primary.length).filter(count=>count==0).length/primaryUnder.length,
-			vcenterUnder.map(vcenter=>vcenter.length).filter(count=>count==0).length/vcenterUnder.length
+			vcenterUnder.map(vcenter=>vcenter.length).filter(count=>count==0).length/vcenterUnder.length, 
+			stnEntUnder.map(stn=>stn.length).filter(count=>count==0).length/stnEntUnder.length
 			]
 
 	var trace={
 		y: pctUnder, 
-		x: ['hospitals', 'primary care', 'voting center'], 
+		x: ['hospitals', 'primary care', 'voting center', 'stations'], 
 		type:'bar',
 		marker: {
-			color: ['green', 'green', 'orange']
+			color: ['green', 'green', 'orange', 'blue']
 		}
 	}
 	// var data = [trace1, trace2, trace3];
@@ -256,13 +272,16 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 		}, 
 		xaxis: {
 			type: 'category'
+			// textfont: {
+			// 	size: 2
+			// }
 		},
 		title: {
 		    font: {
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: '<b>% of Essential Services w/o Coverage</b>'
+			text: '<b>% of Essential Services w/ 0 VPM</b>'
 		}
 	};
 	var layout_2 = {
@@ -282,7 +301,7 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: '<b># of Healthcare Facilities per Coverage Lvl</b>'
+			text: '<b># of Healthcare Facilities per VPM</b>'
 		}
 		// }, 
 		// yaxis: {
@@ -308,7 +327,33 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: '<b># of Voting Centers per Coverage Lvl</b>'
+			text: '<b># of Voting Centers per VPM</b>'
+		}
+		// }, 
+		// yaxis: {
+		// 	// type: 'category', 
+		// 	// range: d3.extent(primaryUnder.map(primary=>parseInt(primary.length)))
+		// 	// range: [0, 50]
+		// }
+	};
+	var layout_4 = {
+		// title: "'Bar' Chart", 
+		margin: {
+			't': 12, 
+			'b': 25, 
+			'l': 25, 
+			'r': 0, 
+			'pad': 0
+		}, 
+		font: {
+			'size': 10
+		},
+		title: {
+		    font: {
+			    family: 'Courier New, monospace',
+      			size: 10
+			}, 
+			text: '<b># of Stations per VPM</b>'
 		}
 		// }, 
 		// yaxis: {
@@ -319,7 +364,7 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	};
 	Plotly.newPlot("bar", [trace], layout_1);
 	var healthcareUnder=hospitalUnder.concat(primaryUnder)	
-	console.log(healthcareUnder.map(hc=>parseInt(hc.length)).sort(number=>parseInt(number))) 
+	// console.log(healthcareUnder.map(hc=>parseInt(hc.length)).sort(number=>parseInt(number))) 
 	// console.log(hospitalUnder.map(hospital=>parseInt(hospital.length)))
 	// console.log(hospitalUnder.map(hospital=>hospital.length).sort())
 	var trace = {
@@ -335,7 +380,7 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
 	// console.log(hospitalMarkers.length)
 	// console.log(primaryUnder.map(primary=>parseInt(primary.length)))
 	// // console.log(primaryUnder.map(primary=>parseInt(primary.length)).sort(number=>parseInt(number)))
-	console.log(vcenterMarkers.length);
+	// console.log(vcenterMarkers.length);
 	var trace = {
     	x: vcenterUnder.map(vc=>parseInt(vc.length)).sort(number=>parseInt(number)), 
     	type: 'histogram',
@@ -344,6 +389,15 @@ function createMap(bikes, stations, hospitals, primaries, vcenters, temps) {
     	}
 	};
 	Plotly.newPlot('hist_2', [trace], layout_3);
+
+	var trace = {
+    	x: stnEntUnder.map(stn=>parseInt(stn.length)).sort(number=>parseInt(number)), 
+    	type: 'histogram',
+    	marker: {
+    		color: 'blue'
+    	}
+	};
+	Plotly.newPlot('hist_3', [trace], layout_4);
 
 	// var trace = {
  //    	y: vcenterUnder.map(vcenter=>parseInt(vcenter.length)).sort(), 
