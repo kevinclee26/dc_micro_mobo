@@ -20,16 +20,53 @@ var bikesQueryUrl = "https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_sta
 // 	})
 // 	.catch(error=>console.log(error));
 
-async function buildTempTable(){
-	var response=await fetch(tempQueryUrl) //await the result of fetch
+tempList=[]
+async function buildTempTable(){ //can only use await keyword in the context of an async (keyword) function
+	var response=await fetch(tempQueryUrl) //await the result of fetch since it is an asynchronous function
 	var tempData=await response.json() //await the response
 	var tempPanel=document.getElementById('temp');
 	var textNode='<p><b>Current Weather: </b></p>';
 	Object.entries(tempData['features'][0]['attributes']).forEach(([key, value])=>{
-		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`);
+		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
 		textNode+=`<p>${key.toUpperCase()}: ${value}</p>`;
 	});
 	tempPanel.innerHTML=textNode;
+	var tempF=tempData['features'][0]['attributes']['AIRTEMP']
+	tempList.push(tempF.substring(0, tempF.length-1)) //add to list for chart
+	chartTemp(tempList);
 };
-
-buildTempTable().then(response=>console.log('Temperature Loaded')).catch(error=>console.error(error)); //
+function chartTemp(tempList){
+	var trace={
+		type: 'bar', 
+		y: tempList
+		// y: [1, 2, 3]
+	};
+	var layout = {
+		title: "'Bar' Chart", 
+		margin: {
+			't': 15, 
+			'b': 15, 
+			'l': 15, 
+			'r': 15, 
+			'pad': 0
+		}, 
+		font: {
+			'size': 10
+		}, 
+		xaxis: {
+			type: 'category'
+			// textfont: {
+			// 	size: 2
+			// }
+		},
+		title: {
+		    font: {
+			    family: 'Courier New, monospace',
+      			size: 10
+			}, 
+			text: '<b>% of Essential Services w/ 0 VPM</b>'
+		}
+	};
+	Plotly.newPlot('bar', [trace], layout);
+}
+buildTempTable().then(response=>console.log('Temperature Loaded')).catch(error=>console.log(error)); //an async functino by definition returns a promise
