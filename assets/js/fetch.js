@@ -1,6 +1,6 @@
 // fetch('https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status').then(response=>response['body'].getReader().read().then(data=>console.log(data)));
 const timeFrame=10; //timeFrame is the maximum number of data points
-const timeInterval=60000; //timeInterval is the frequency of updates measured in milliseconds (1000ms=1s)
+const timeInterval=30000; //timeInterval is the frequency of updates measured in milliseconds (1000ms=1s)
 var tempQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/152/query?where=1%3D1&outFields=AIRTEMP,RELATIVEHUMIDITY,VISIBILITY,WINDSPEED&outSR=4326&f=json';
 var bikesQueryUrl = "https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status";
 var censusQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Demographic_WebMercator/MapServer/36/query?where=1%3D1&outFields=TRACTID,POP10,HOUSING10&outSR=4326&f=json';
@@ -28,20 +28,32 @@ var bikeCountList=[];
 var bikeIdList=[];
 var newCountList=[];
 var remCountList=[];
-var chartLabels=[{
-		text: 'new',
-		color: 'green'
-	}, {
-		text: 'rem', 
-		color: 'orange'
-	}];
 var bikeLayer;
 var censusPoly;
 var bikeRemLayer;
+var prevBikeFeatures=[];
+var bikeFeatures;
+var remRecord={};
 
 function masterClock(){
 	timeList=resetTimeFrame(timeList);
 	timeList.push(formatTime(Date.now()));
+};
+
+function buildRankTable(){
+	var sortedRecord = Object.entries(remRecord)
+	    .sort(([,a],[,b])=>b-a)
+	    .slice(0, 5) //only want the top 5 results
+	    // .reduce((r, [key, value]) => ({ ...r, [key]: value }), {});
+    var recordPanel=document.getElementById('record');
+	var textNode='<p><b>Current Record: </b></p>';
+	textNode+='<table><thead><th>Tract ID</th><th>Count</th></thead><tbody>';
+	sortedRecord.forEach(([key, value])=>{
+		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
+		textNode+=`<tr><td>${key}</td><td>${value}</td></tr>`;
+	});
+	textNode+='</tbody></table>'
+	recordPanel.innerHTML=textNode;
 };
 
 async function buildTempTable(){ //can only use await keyword in the context of an async (keyword) function
@@ -57,27 +69,33 @@ async function buildTempTable(){ //can only use await keyword in the context of 
 	var tempF=tempData['features'][0]['attributes']['AIRTEMP'];
 	tempList=resetTimeFrame(tempList);
 	tempList.push(tempF.substring(0, tempF.length-1)); //add to list for chart
-	chartBar(tempList, 'tempBar');
+	chartLine(tempList, 'tempLine', 'Temp');
 };
 
 async function buildBikeTable(){ //can only use await keyword in the context of an async (keyword) function
 	var response=await fetch(bikesQueryUrl); //await the result of fetch since it is an asynchronous function
 	var bikeData=await response.json(); //await the response
-	var bikeCount=bikeData['data']['bikes'].length;
-	var bikeIdListNew=bikeData['data']['bikes'].map(bike=>bike['bike_id'])
-	var [newList, remList]=calcDifference(bikeIdListNew, bikeIdList);
-	bikeIdList=bikeIdListNew;
+	bikeFeatures=bikeData['data']['bikes']
+	var bikeCount=bikeFeatures.length;
+	// var bikeIdListNew=bikeData['data']['bikes'].map(bike=>bike['bike_id'])
+	// var [newList, remList]=calcDifference(bikeIdListNew, bikeIdList);
+	var [newFeatures, remFeatures]=calcDifference(bikeFeatures, prevBikeFeatures);
+	// bikeIdList=bikeIdListNew;
 	bikeCountList=resetTimeFrame(bikeCountList);
 	newCountList=resetTimeFrame(newCountList);
 	remCountList=resetTimeFrame(remCountList);
 	bikeCountList.push(bikeCount);
-	newCountList.push(newList.length);
-	remCountList.push(remList.length);
-	remList=['23b5848e-c7a5-4d65-972a-097920a23299', '9c3e2142-7342-440d-9a9d-97814ee3e922']; //for testing
-	updateBikeMap(bikeData['data']['bikes']);
-	updateRemBikes(findBikeByIds(remList, bikeData['data']['bikes']));
-	chartBar(bikeCountList, 'bikeBar');
-	chartBars([newCountList, remCountList], 'bikeBars');
+	newCountList.push(newFeatures.length);
+	remCountList.push(remFeatures.length);
+	console.log(`new features: ${newFeatures}`);
+	console.log(`rem features: ${remFeatures}`);
+	// remList=['23b5848e-c7a5-4d65-972a-097920a23299', '9c3e2142-7342-440d-9a9d-97814ee3e922']; //for testing
+	updateBikeMap(bikeFeatures);
+	// updateRemBikes(findBikeByIds(remList, bikeData['data']['bikes']));
+	updateRemBikes(remFeatures);
+	chartLine(bikeCountList, 'bikeLine', 'Availble Bikes');
+	chartBars([newCountList, remCountList], 'bikeLines');
+	prevBikeFeatures=bikeFeatures; //reset prevBikeFeatures for finding difference
 };
 
 async function mapCensusTract(){
@@ -85,7 +103,7 @@ async function mapCensusTract(){
 	var census=await response.json();
 	// Create a Polygon and pass in some initial options
 	censusPoly=census['features'];
-	census['features'].forEach(feature=>{
+	censusPoly.forEach(feature=>{
 		L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
 			color: "black",
 			fillColor: "yellow",
@@ -135,21 +153,46 @@ function inside(point, vs) {
 function updateRemBikes(bikesRem){
 	console.log(bikesRem);
 	var bikeRemMarkers=[];
-	if (bikeRemLayer){
-		map.removeLayer(bikeRemLayer);
-	};
-	var scooterIcon=L.icon({
-		iconUrl: 'assets/images/kick-scooter.png',
-		iconSize: [10, 10], // size of the icon
+	// if (bikeRemLayer){
+	// 	map.removeLayer(bikeRemLayer);
+	// };
+	var fireworkIcon=L.icon({
+		iconUrl: 'assets/images/firework.png',
+		iconSize: [50, 50], // size of the icon
 	});
 	for (var i=0; i<bikesRem.length; i++){
 		if (bikesRem[i]){
-			bikeRemMarkers.push(L.marker([bikesRem[i]['lat'], bikesRem[i]['lon']]));
+			bikeRemMarkers.push(L.marker([bikesRem[i]['lat'], bikesRem[i]['lon']], {icon: fireworkIcon}).bindPopup("<h6>ID: " + bikesRem[i]['bike_id'] + "</h6>"));
 		};
 	};
-	console.log(bikeRemMarkers);
+	// console.log(bikeRemMarkers);
 	bikeRemLayer=L.layerGroup(bikeRemMarkers);
 	bikeRemLayer.addTo(map);
+	updateRemRecord(bikesRem);
+};
+
+function updateRemRecord(bikesRem){
+	if (bikesRem.length>0){
+		sample=bikesRem[0];
+		var remFeatureTracts=censusPoly.filter(feature=>inside([sample['lat'], sample['lon']], L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]))==true);
+		remFeatureTracts.forEach(tract=>{
+			var tractId=tract['attributes']['TRACTID']
+			if (remRecord[tractId]){
+				remRecord[tractId]+=1
+			} else {
+				remRecord[tractId]=1
+			};
+			console.log(`bike rented at: ${tractId}`);
+		});
+		// testAry.forEach(feature=>{
+		// 	L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
+		// 		color: "black",
+		// 		fillColor: "red",
+		// 		fillOpacity: 1
+		// 	}).addTo(map);
+		// });
+	};
+	console.log(remRecord);
 };
 
 function updateBikeMap(bikes){
@@ -174,7 +217,7 @@ function updateBikeMap(bikes){
 	// console.log('Map has', i, 'layers.');
 };
 
-//resetTimeFrame makes sure that only timeFrame-1 elements in the list
+//resetTimeFrame makes sure that only timeFrame elements in the list
 function resetTimeFrame(ary){ 
 	if (ary.length>=timeFrame){
 		ary=ary.slice(1, timeFrame);
@@ -192,14 +235,23 @@ function formatTime(unixNum){
 };
 //calcDifference figures the differential between two lists
 function calcDifference(aryNow, aryPrior){
-	var newEle=aryNow.filter(ele=>!aryPrior.includes(ele));
-	var eleRem=aryPrior.filter(ele=>!aryNow.includes(ele));
+	// aryNow=currentList
+	var newEle=aryNow.filter(ele=>!aryPrior.map(feature=>feature['bike_id']).includes(ele['bike_id']));
+	var eleRem=aryPrior.filter(ele=>!aryNow.map(feature=>feature['bike_id']).includes(ele['bike_id']));
+	// var bikeRemFeatures=eleRem.map(bikeId=>aryPrior.find(feature=>feature['bike_id']==bikeId));
 	// console.log(newEle);
 	// console.log(eleRem);
 	return [newEle, eleRem];
 };
 
 function chartBars(dataLists, plotID){
+	var chartLabels=[{
+		text: 'new',
+		color: 'green'
+	}, {
+		text: 'rem', 
+		color: 'orange'
+	}];
 	var data=[];
 	// console.log(dataLists);
 	dataLists.forEach((dataList, i)=>{
@@ -244,7 +296,7 @@ function chartBars(dataLists, plotID){
 	Plotly.newPlot(plotID, data, layout);
 };
 
-function chartBar(dataList, plotID){
+function chartLine(dataList, plotID, plotTitle){
 	var trace={
 		type: 'line', 
 		y: dataList, 
@@ -274,7 +326,7 @@ function chartBar(dataList, plotID){
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: '<b>% of Essential Services w/ 0 VPM</b>'
+			text: plotTitle
 		}
 	};
 	Plotly.newPlot(plotID, [trace], layout);
@@ -338,6 +390,7 @@ setInterval(()=>{
 	masterClock();
 	// buildTempTable().then(response=>console.log('Temperature Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
 	buildBikeTable().then(response=>console.log('Bikes Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
+	buildRankTable();
 	// var millis=Date.now()-start;
 	// console.log(`seconds elapsed=${millis/1000}`);
 }, timeInterval); //measured in milliseconds 1000ms=1s
