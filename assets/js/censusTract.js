@@ -21,17 +21,19 @@ async function mapCensusTract(){
 		L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
 			color: "black",
 			fillColor: "yellow",
-			fillOpacity: 0.75
+			fillOpacity: 0.25, 
+			weight: .25
 		}).addTo(myMap);
 	});
-	console.log(inside([38.9, -77.04], L.GeoJSON.coordsToLatLngs(census['features'][0]['geometry']['rings'][0])));
-	var testAry=census['features'].filter(feature=>inside([-77.036873, 38.907192], feature['geometry']['rings'][0])==true);
-	// var testAry=census['features'].filter(feature=>inside([38.9072, -77.0369], L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]))==true);
+	// console.log(inside([38.9, -77.04], L.GeoJSON.coordsToLatLngs(census['features'][0]['geometry']['rings'][0])));
+	// var testAry=census['features'].filter(feature=>inside([-77.036873, 38.907192], feature['geometry']['rings'][0])==true);
+	var testAry=census['features'].filter(feature=>inside([38.9072, -77.0369], L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]))==true);
+	// console.log(L.GeoJSON.coordsToLatLngs(census['features'][0]['geometry']['rings'][0]));
 	testAry.forEach(feature=>{
 		L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
 			color: "black",
 			fillColor: "red",
-			fillOpacity: 0.75
+			fillOpacity: 0.25
 		}).addTo(myMap);
 	});
 	console.log(testAry);
@@ -44,10 +46,10 @@ function inside(point, vs) {
     var y = point[1]; //long
     var inside = false;
     for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-        var xi = vs[i][0];
-        var yi = vs[i][1];
-        var xj = vs[j][0]; 
-        var yj = vs[j][1];
+        var xi = vs[i]['lat']; //use [0] if array and ['lat'] if JSON
+        var yi = vs[i]['lng']; //use [1] if array and ['lng'] if JSON
+        var xj = vs[j]['lat']; //use [0] if array and ['lat'] if JSON
+        var yj = vs[j]['lng']; //use [1] if array and ['lng'] if JSON
         var intersect = ((yi > y) != (yj > y))
             && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
