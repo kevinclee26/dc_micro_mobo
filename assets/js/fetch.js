@@ -34,11 +34,12 @@ var chartLabels=[{
 		text: 'rem', 
 		color: 'orange'
 	}];
+var bikeLayer;
 
 function masterClock(){
 	timeList=resetTimeFrame(timeList);
 	timeList.push(formatTime(Date.now()));
-}
+};
 
 async function buildTempTable(){ //can only use await keyword in the context of an async (keyword) function
 	var response=await fetch(tempQueryUrl); //await the result of fetch since it is an asynchronous function
@@ -69,12 +70,17 @@ async function buildBikeTable(){ //can only use await keyword in the context of 
 	bikeCountList.push(bikeCount);
 	newCountList.push(newCount);
 	remCountList.push(remCount);
+	// if (bikeLayer){
+	// 	map.removeLayer(bikeLayer);
+	// }
+	// bikeLayer=updateBikeLayer(bikeData['data']['bikes']);
+	// updateBikeMap(bikeLayer);
 	updateBikeMap(bikeData['data']['bikes']);
 	chartBar(bikeCountList, 'bikeBar');
 	chartBars([newCountList, remCountList], 'bikeBars');
 };
 
-function updateBikeMap(bikes){
+function updateBikeLayer(bikes){
 	var scooterIcon = L.icon({
 		iconUrl: 'assets/images/kick-scooter.png',
 		iconSize:     [25, 25], // size of the icon
@@ -86,7 +92,32 @@ function updateBikeMap(bikes){
 	  	);
 	};
 	var bikeLayer = L.layerGroup(bikeMarkers);
+	return bikeLayer;
+};
+
+function updateBikeMap(bikes){
+	var i = 0;
+	map.eachLayer(function(){ i += 1; });
+	console.log('Map has', i, 'layers.');
+	if (bikeLayer){
+		map.removeLayer(bikeLayer);
+	};
+	var scooterIcon = L.icon({
+		iconUrl: 'assets/images/kick-scooter.png',
+		iconSize:     [25, 25], // size of the icon
+	});
+	var bikeMarkers = [];
+	for (var i = 0; i < bikes.length; i++) {
+	  	bikeMarkers.push(
+	    	L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}).bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>")// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
+	  	);
+	};
+	bikeLayer = L.layerGroup(bikeMarkers);
+	// updateBikeMap()
 	bikeLayer.addTo(map);
+	var i = 0;
+	map.eachLayer(function(){ i += 1; });
+	console.log('Map has', i, 'layers.');
 };
 
 //resetTimeFrame makes sure that only timeFrame-1 elements in the list
@@ -214,8 +245,8 @@ function initMap(){
 
 	// Define a baseMaps object to hold our base layers
 	var baseMaps = {
-	"Street Map": streetmap,
-	"Dark Map": darkmap
+		"Street Map": streetmap,
+		"Dark Map": darkmap
 	};
 
 	// Create overlay object to hold our overlay layer
