@@ -2,7 +2,8 @@
 const timeFrame=10; //timeFrame is the maximum number of data points
 const timeInterval=30000; //timeInterval is the frequency of updates measured in milliseconds (1000ms=1s)
 var tempQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/152/query?where=1%3D1&outFields=AIRTEMP,RELATIVEHUMIDITY,VISIBILITY,WINDSPEED&outSR=4326&f=json';
-var bikesQueryUrl = "https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status";
+var bikesQueryUrl="https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status";
+var census='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Demographic_WebMercator/MapServer/36/query?where=1%3D1&outFields=TRACTID,POP10,HOUSING10&outSR=4326&f=json';
 
 // function buildTempTable(temp_data){
 // 	var temp_panel=document.getElementById('temp');
@@ -291,3 +292,22 @@ setInterval(()=>{
 // console.log(test1);
 // console.log(test2);
 // console.log(chartLabels);
+
+function inside(point, vs) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html    
+    var x=point[0], y=point[1];
+    var inside=false;
+    for (var i=0, j=vs.length-1; i<vs.length; j=i++) {
+        var xi=vs[i][0], yi=vs[i][1];
+        var xj=vs[j][0], yj=vs[j][1];
+        
+        var intersect=((yi>y)!=(yj>y))
+            &&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
+        if (intersect) inside=!inside;
+    }
+    return inside;
+};
+
+var polygon = [ [ 1, 1 ], [ 1, 2 ], [ 2, 2 ], [ 2, 1 ] ];
+console.log(inside([ 1.5, 1.5 ], polygon)); // true
