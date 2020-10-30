@@ -22,6 +22,8 @@ var censusQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/De
 // 	})
 // 	.catch(error=>console.log(error));
 
+var timeStart=Date.now()
+var counter=0;
 var tempList=[];
 var timeList=[];
 var bikeCountList=[];
@@ -43,10 +45,10 @@ function masterClock(){
 function buildRankTable(){
 	var sortedRecord = Object.entries(remRecord)
 	    .sort(([,a],[,b])=>b-a)
-	    .slice(0, 5) //only want the top 5 results
+	    // .slice(0, 5) //only want the top 5 results
 	    // .reduce((r, [key, value]) => ({ ...r, [key]: value }), {});
     var recordPanel=document.getElementById('record');
-	var textNode='<p><b>Current Record: </b></p>';
+	var textNode='<h6 style="margin-top: 0px;">Current Record: </h6>';
 	textNode+='<table><thead><th>Tract ID</th><th>Count</th></thead><tbody>';
 	sortedRecord.forEach(([key, value])=>{
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
@@ -60,7 +62,7 @@ async function buildTempTable(){ //can only use await keyword in the context of 
 	var response=await fetch(tempQueryUrl); //await the result of fetch since it is an asynchronous function
 	var tempData=await response.json(); //await the response
 	var tempPanel=document.getElementById('temp');
-	var textNode='<p><b>Current Weather: </b></p>';
+	var textNode='<h6 style="margin-top: 0px;">Current Weather: </h6>';
 	Object.entries(tempData['features'][0]['attributes']).forEach(([key, value])=>{
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
 		textNode+=`<p>${key.toUpperCase()}: ${value}</p>`;
@@ -333,6 +335,10 @@ function chartLine(dataList, plotID, plotTitle){
 };
 
 function initMap(){
+	var masterPanel=document.getElementById('start');
+	masterPanel.innerHTML=`<h6 style="margin-top: 0px">Started: ${formatTime(timeStart)}</h6>`
+	var cyclePanel=document.getElementById('cycle');
+	cyclePanel.innerHTML=`<p>updates every ${timeInterval/1000} seconds</p>`;
 	var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
 		attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
 		tileSize: 512,
@@ -341,20 +347,17 @@ function initMap(){
 		id: "mapbox/streets-v11",
 		accessToken: API_KEY
 	});
-
 	var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
 		attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
 		maxZoom: 18,
 		id: "dark-v10",
 		accessToken: API_KEY
 	});
-
 	// Define a baseMaps object to hold our base layers
 	var baseMaps = {
 		"Street Map": streetmap,
 		"Dark Map": darkmap
 	};
-
 	// Create overlay object to hold our overlay layer
 	// var overlayMaps = {
 	// 	bikes: bikeLayer, 
@@ -378,6 +381,11 @@ function initMap(){
 	return myMap;
 };
 
+function updateCounter(){
+	var counterPanel=document.getElementById('counter');
+	counterPanel.innerHTML=`<h3>${counter*timeInterval/60000} mins</h3>`;
+}
+
 //initiatlize
 var map=initMap();
 masterClock();
@@ -388,6 +396,8 @@ buildBikeTable().then(response=>console.log('Bikes Refreshed')).catch(error=>con
 // var start=Date.now();
 setInterval(()=>{
 	masterClock();
+	counter+=1
+	updateCounter();
 	// buildTempTable().then(response=>console.log('Temperature Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
 	buildBikeTable().then(response=>console.log('Bikes Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
 	buildRankTable();
