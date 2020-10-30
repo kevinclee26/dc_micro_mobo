@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ og: http://ogp.me/ns# rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"348872d504",applicationID:"496267014"};window.NREUM||(NREUM={}),__nr_require=function(e,t,n){function r(n){if(!t[n]){var i=t[n]={exports:{}};e[n][0].call(i.exports,function(t){var i=e[n][1][t];return r(i||t)},i,i.exports)}return t[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<n.length;i++)r(n[i]);return r}({1:[function(e,t,n){function r(){}function i(e,t,n){return function(){return o(e,[u.now()].concat(c(arguments)),t?null:this,n),t?void 0:this}}var o=e("handle"),a=e(6),c=e(7),f=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],p="api-",l=p+"ixn-";a(d,function(e,t){s[t]=i(p+t,!0,"api")}),s.addPageAction=i(p+"addPageAction",!0),s.setCurrentRouteName=i(p+"routeName",!0),t.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,t){var n={},r=this,i="function"==typeof t;return o(l+"tracer",[u.now(),e,n],r),function(){if(f.emit((i?"":"no-")+"fn-start",[u.now(),r,i],n),i)try{return t.apply(this,arguments)}catch(e){throw f.emit("fn-err",[arguments,this,e],n),e}finally{f.emit("fn-end",[u.now()],n)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,t){m[t]=i(l+t)}),newrelic.noticeError=function(e,t){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,t])}},{}],2:[function(e,t,n){function r(){return c.exists&&performance.now?Math.round(performance.now()):(o=Math.max((new Date).getTime(),o))-a}function i(){return o}var o=(new Date).getTime(),a=o,c=e(8);t.exports=r,t.exports.offset=a,t.exports.getLastTimestamp=i},{}],3:[function(e,t,n){function r(e,t){var n=e.getEntries();n.forEach(function(e){"first-paint"===e.name?d("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&d("timing",["fcp",Math.floor(e.startTime)])})}function i(e,t){var n=e.getEntries();n.length>0&&d("lcp",[n[n.length-1]])}function o(e){e.getEntries().forEach(function(e){e.hadRecentInput||d("cls",[e])})}function a(e){if(e instanceof m&&!g){var t=Math.round(e.timeStamp),n={type:e.type};t<=p.now()?n.fid=p.now()-t:t>p.offset&&t<=Date.now()?(t-=p.offset,n.fid=p.now()-t):t=p.now(),g=!0,d("timing",["fi",t,n])}}function c(e){d("pageHide",[p.now(),e])}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var f,u,s,d=e("handle"),p=e("loader"),l=e(5),m=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){f=new PerformanceObserver(r);try{f.observe({entryTypes:["paint"]})}catch(v){}u=new PerformanceObserver(i);try{u.observe({entryTypes:["largest-contentful-paint"]})}catch(v){}s=new PerformanceObserver(o);try{s.observe({type:"layout-shift",buffered:!0})}catch(v){}}if("addEventListener"in document){var g=!1,y=["click","keydown","mousedown","pointerdown","touchstart"];y.forEach(function(e){document.addEventListener(e,a,!1)})}l(c)}},{}],4:[function(e,t,n){function r(e,t){if(!i)return!1;if(e!==i)return!1;if(!t)return!0;if(!o)return!1;for(var n=o.split("."),r=t.split("."),a=0;a<r.length;a++)if(r[a]!==n[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,f=c.match(a);f&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(i="Safari",o=f[1])}t.exports={agent:i,version:o,match:r}},{}],5:[function(e,t,n){function r(e){function t(){e(a&&document[a]?document[a]:document[i]?"hidden":"visible")}"addEventListener"in document&&o&&document.addEventListener(o,t,!1)}t.exports=r;var i,o,a;"undefined"!=typeof document.hidden?(i="hidden",o="visibilitychange",a="visibilityState"):"undefined"!=typeof document.msHidden?(i="msHidden",o="msvisibilitychange"):"undefined"!=typeof document.webkitHidden&&(i="webkitHidden",o="webkitvisibilitychange",a="webkitVisibilityState")},{}],6:[function(e,t,n){function r(e,t){var n=[],r="",o=0;for(r in e)i.call(e,r)&&(n[o]=t(r,e[r]),o+=1);return n}var i=Object.prototype.hasOwnProperty;t.exports=r},{}],7:[function(e,t,n){function r(e,t,n){t||(t=0),"undefined"==typeof n&&(n=e?e.length:0);for(var r=-1,i=n-t||0,o=Array(i<0?0:i);++r<i;)o[r]=e[t+r];return o}t.exports=r},{}],8:[function(e,t,n){t.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,t,n){function r(){}function i(e){function t(e){return e&&e instanceof r?e:e?f(e,c,o):o()}function n(n,r,i,o){if(!p.aborted||o){e&&e(n,r,i);for(var a=t(i),c=v(n),f=c.length,u=0;u<f;u++)c[u].apply(a,r);var d=s[w[n]];return d&&d.push([b,n,r,a]),a}}function l(e,t){h[e]=v(e).concat(t)}function m(e,t){var n=h[e];if(n)for(var r=0;r<n.length;r++)n[r]===t&&n.splice(r,1)}function v(e){return h[e]||[]}function g(e){return d[e]=d[e]||i(n)}function y(e,t){u(e,function(e,n){t=t||"feature",w[n]=t,t in s||(s[t]=[])})}var h={},w={},b={on:l,addEventListener:l,removeEventListener:m,emit:n,get:g,listeners:v,context:t,buffer:y,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(p.aborted=!0,s=p.backlog={})}var c="nr@context",f=e("gos"),u=e(6),s={},d={},p=t.exports=i();p.backlog=s},{}],gos:[function(e,t,n){function r(e,t,n){if(i.call(e,t))return e[t];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[t]=r,r}var i=Object.prototype.hasOwnProperty;t.exports=r},{}],handle:[function(e,t,n){function r(e,t,n,r){i.buffer([e],r),i.emit(e,t,n)}var i=e("ee").get("handle");t.exports=r,r.ee=i},{}],id:[function(e,t,n){function r(e){var t=typeof e;return!e||"object"!==t&&"function"!==t?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");t.exports=r},{}],loader:[function(e,t,n){function r(){if(!E++){var e=b.info=NREUM.info,t=p.getElementsByTagName("script")[0];if(setTimeout(u.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&t))return u.abort();f(h,function(t,n){e[t]||(e[t]=n)});var n=a();c("mark",["onload",n+b.offset],null,"api"),c("timing",["load",n]);var r=p.createElement("script");r.src="https://"+e.agent,t.parentNode.insertBefore(r,t)}}function i(){"complete"===p.readyState&&o()}function o(){c("mark",["domContent",a()+b.offset],null,"api")}var a=e(2),c=e("handle"),f=e(6),u=e("ee"),s=e(4),d=window,p=d.document,l="addEventListener",m="attachEvent",v=d.XMLHttpRequest,g=v&&v.prototype;NREUM.o={ST:setTimeout,SI:d.setImmediate,CT:clearTimeout,XHR:v,REQ:d.Request,EV:d.Event,PR:d.Promise,MO:d.MutationObserver};var y=""+location,h={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1184.min.js"},w=v&&g&&g[l]&&!/CriOS/.test(navigator.userAgent),b=t.exports={offset:a.getLastTimestamp(),now:a,origin:y,features:{},xhrWrappable:w,userAgent:s};e(1),e(3),p[l]?(p[l]("DOMContentLoaded",o,!1),d[l]("load",r,!1)):(p[m]("onreadystatechange",i),d[m]("onload",r)),c("mark",["firstbyte",a.getLastTimestamp()],null,"api");var E=0},{}],"wrap-function":[function(e,t,n){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(7),a="nr@original",c=Object.prototype.hasOwnProperty,f=!1;t.exports=function(e,t){function n(e,t,n,i){function nrWrapper(){var r,a,c,f;try{a=this,r=o(arguments),c="function"==typeof n?n(r,a):n||{}}catch(u){p([u,"",[r,a,i],c])}s(t+"start",[r,a,i],c);try{return f=e.apply(a,r)}catch(d){throw s(t+"err",[r,a,d],c),d}finally{s(t+"end",[r,a,f],c)}}return r(e)?e:(t||(t=""),nrWrapper[a]=e,d(e,nrWrapper),nrWrapper)}function u(e,t,i,o){i||(i="");var a,c,f,u="-"===i.charAt(0);for(f=0;f<t.length;f++)c=t[f],a=e[c],r(a)||(e[c]=n(a,u?c+i:i,o,c))}function s(n,r,i){if(!f||t){var o=f;f=!0;try{e.emit(n,r,i,t)}catch(a){p([a,n,r,i])}f=o}}function d(e,t){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(e);return n.forEach(function(n){Object.defineProperty(t,n,{get:function(){return e[n]},set:function(t){return e[n]=t,t}})}),t}catch(r){p([r])}for(var i in e)c.call(e,i)&&(t[i]=e[i]);return t}function p(t){try{e.emit("internal-error",t)}catch(n){}}return e||(e=i),n.inPlace=u,n.flag=a,n}},{}]},{},["loader"]);</script>
+<link rel="shortcut icon" href="https://ddot.dc.gov/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+<meta name="description" content="New Emergency and Proposed rulemaking governing the Dockless Vehicle Permit Program" />
+<meta name="generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="https://ddot.dc.gov/page/dockless-vehicle-permits-district" />
+<link rel="shortlink" href="https://ddot.dc.gov/page/dockless-vehicle-permits-district" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:url" content="https://ddot.dc.gov/page/dockless-vehicle-permits-district" />
+<meta name="twitter:title" content="Dockless Vehicle Permits in the District" />
+<meta name="twitter:description" content="New Emergency and Proposed rulemaking governing the Dockless Vehicle Permit Program" />
+  <title>Dockless Vehicle Permits in the District | ddot</title>  
+  <link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_PFKW89NpF0VPfMxzWvQhFMYNFsCa2aHlaaeeHDKeIE8.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_aN7JUBzlL2NtORSaseLNYl3Pqalpu5hdsfJyzHv1WTM.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_jhjc9dBT43wTvtgjTl2XUf8bMpz9E6K1QyUuYdk83SY.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_coT60ccp7JgDRVDr7f4tIuCDF1KtQ97IZ6xw9ShA9ZM.css" media="all" />
+
+<!--[if (lt IE 9)&(!IEMobile)]>
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_ASD_F3Cgrh4TrINm-4km8hzYjKf9cfcxye2ihPGLAoU.css" media="all" />
+<![endif]-->
+
+<!--[if gte IE 9]><!-->
+<link type="text/css" rel="stylesheet" href="https://ddot.dc.gov/sites/default/files/css/css_ulMblnJuu94LySu1GZebJsgXh1DK_lpCUINOtMYxPYc.css" media="all" />
+<!--<![endif]-->
+  <script type="text/javascript" src="https://ddot.dc.gov/sites/default/files/js/js_ri60QNjcazMKdlAmWmDsmRb0iKaVkkXUQxH2MsgpmVo.js"></script>
+<script type="text/javascript" src="https://ddot.dc.gov/sites/default/files/js/js_xpcUaefRF16dGRM12CceyhwGxO2jTZMKo_3milCSqpk.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var text_resize_scope = "not-front #main, #zone-content";
+    var text_resize_minimum = "12";
+    var text_resize_maximum = "25";
+    var text_resize_line_height_allow = 1;
+    var text_resize_line_height_min = "16";
+    var text_resize_line_height_max = "36";
+//--><!]]>
+</script>
+<script type="text/javascript" src="https://ddot.dc.gov/sites/default/files/js/js_Eo5T__k7cT67RdWobG-2b-YrtvQ0lCM-iy2ivBhk9PY.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function(i,s,o,g,r,a,m){i["GoogleAnalyticsObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,"script","//www.google-analytics.com/analytics.js","ga");ga("create", "UA-2638726-1", {"cookieDomain":"auto"});ga("send", "pageview");
+//--><!]]>
+</script>
+<script type="text/javascript" src="https://ddot.dc.gov/sites/default/files/js/js_HCBPZLeEzBJLgRGNNYUlORsa04rsIGMbOCCEU3qKXiA.js"></script>
+<script type="text/javascript" src="https://ddot.dc.gov/sites/default/files/js/js_43n5FBy8pZxQHxPXkf-sQF7ZiacVZke14b0VlvSA554.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"dc_agency_omega","theme_token":"DnyIsTk9Me7lSQo7w4akZwngA-KSWyrZPpQIshc8cxs","js":{"sites\/all\/modules\/contrib\/jquery_update\/replace\/jquery\/1.8\/jquery.min.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/text_resize\/jquery.cookie.js":1,"0":1,"sites\/all\/modules\/text_resize\/text_resize.js":1,"sites\/all\/modules\/extlink\/extlink.js":1,"sites\/all\/modules\/google_analytics\/googleanalytics.js":1,"1":1,"sites\/all\/themes\/dc_agency_omega\/js\/dcAgency.js":1,"sites\/all\/themes\/omega\/omega\/js\/jquery.formalize.js":1,"sites\/all\/themes\/omega\/omega\/js\/omega-mediaqueries.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"sites\/all\/modules\/date\/date_popup\/themes\/datepicker.1.7.css":1,"sites\/all\/modules\/date\/date_repeat_field\/date_repeat_field.css":1,"sites\/all\/modules\/domain\/domain_nav\/domain_nav.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/search\/search.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/views\/css\/views.css":1,"sites\/all\/modules\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/modules\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/contrib\/flickrgallery\/flickrgallery.css":1,"sites\/all\/modules\/panels\/css\/panels.css":1,"sites\/all\/modules\/rate\/rate.css":1,"sites\/all\/modules\/text_resize\/text_resize.css":1,"sites\/all\/modules\/extlink\/extlink.css":1,"sites\/all\/themes\/dc_agency_omega\/css\/normalize.css":1,"sites\/all\/themes\/omega\/alpha\/css\/alpha-reset.css":1,"sites\/all\/themes\/omega\/alpha\/css\/alpha-mobile.css":1,"sites\/all\/themes\/omega\/omega\/css\/formalize.css":1,"sites\/all\/themes\/omega\/omega\/css\/omega-text.css":1,"sites\/all\/themes\/omega\/omega\/css\/omega-branding.css":1,"sites\/all\/themes\/omega\/omega\/css\/omega-forms.css":1,"sites\/all\/themes\/dc_agency_omega\/css\/global.css":1,"ie::normal::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default.css":1,"ie::normal::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default-normal.css":1,"ie::normal::sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/normal\/alpha-default-normal-24.css":1,"ie::normal::sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/normal\/alpha-default-normal-12.css":1,"narrow::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default.css":1,"narrow::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default-narrow.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/narrow\/alpha-default-narrow-24.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/narrow\/alpha-default-narrow-12.css":1,"normal::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default.css":1,"normal::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default-normal.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/normal\/alpha-default-normal-24.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/normal\/alpha-default-normal-12.css":1,"wide::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default.css":1,"wide::sites\/all\/themes\/dc_agency_omega\/css\/dc-agency-omega-alpha-default-wide.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/wide\/alpha-default-wide-24.css":1,"sites\/all\/themes\/omega\/alpha\/css\/grid\/alpha_default\/wide\/alpha-default-wide-12.css":1}},"extlink":{"extTarget":"_blank","extClass":"ext","extSubdomains":1,"extExclude":"http[s]*:\/\/[a-zA-Z0-9\\-\\.]*dc.gov[\\\/a-zA-Z0-9\\-\\.\\?\\=]*","extInclude":"","extAlert":0,"extAlertText":"The District government has provided links as a courtesy and is not responsible for information on websites outside the DC portal. Inquiries should be made to the sponsoring organizations.","mailtoClass":"mailto"},"better_exposed_filters":{"views":{"alerts":{"displays":{"emergency_alerts_block":{"filters":[]}}},"agency_information":{"displays":{"block":{"filters":[]},"agency_director":{"filters":[]}}},"features_blocks":{"displays":{"interior_1":{"filters":[]},"interior_2":{"filters":[]},"interior_3":{"filters":[]},"interior_4":{"filters":[]}}}}},"googleanalytics":{"trackOutbound":1,"trackMailto":1,"trackDownload":1,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip"},"omega":{"layouts":{"primary":"normal","order":["narrow","normal","wide"],"queries":{"narrow":"all and (min-width: 740px) and (min-device-width: 740px), (max-device-width: 800px) and (min-width: 740px) and (orientation:landscape)","normal":"all and (min-width: 980px) and (min-device-width: 980px), all and (max-device-width: 1024px) and (min-width: 1024px) and (orientation:landscape)","wide":"all and (min-width: 1220px)"}}}});
+//--><!]]>
+</script>
+  <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in no-sidebars page-node page-node- page-node-1323886 node-type-page domain-ddot-dc-gov i18n-en context-page">
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible element-focusable">Skip to main content</a>
+  </div>
+  <div class="region region-page-top" id="region-page-top">
+  <div class="region-inner region-page-top-inner">
+      </div>
+</div>  <div class="page clearfix" id="page">
+      <header id="section-header" class="section section-header">
+  <div id="zone-menu-wrapper" class="zone-wrapper zone-menu-wrapper clearfix">  
+  <div id="zone-menu" class="zone zone-menu clearfix container-24">
+    <div class="grid-24 region region-menu" id="region-menu">
+  <div class="region-inner region-menu-inner">
+          </div>
+</div>
+  </div>
+</div><div id="zone-branding-wrapper" class="zone-wrapper zone-branding-wrapper clearfix">  
+  <div id="zone-branding" class="zone zone-branding clearfix container-24">
+    <div class="grid-24 region region-branding" id="region-branding">
+  <div class="region-inner region-branding-inner">
+        <div class="branding-data clearfix">
+                        <hgroup class="site-name-slogan">
+                                <h1 id="site-name-only" class="site-name">ddot</h1>
+                                        <h6 id="site-slogan" class="site-slogan">District Department of Transportation</h6>
+              </hgroup>
+          </div>
+        <div class="block block-block block-164 block-block-164 odd block-without-title" id="block-block-164">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <style type="text/css">#header #block-menu-block-2{
+text-align:left;}
+.dcSearchForm input{
+font-size:14px;padding:3px!important}
+.logo-text{
+padding-left:10px;font-size:14px}
+.logo-text a{font-size:14px!important}
+.zone-content-wrapper nav.node-links {
+    display: none;
+}
+/* Show node language translation block links on internal pages*/
+.not-front .zone-content-wrapper nav.node-links {
+   display: block!important;
+}
+/* .element-invisible {display: none;} */
+
+/* DCRA menu modification */
+.menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > .collapsed, 
+.menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-198786,
+.menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197476,
+.menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197951 {
+	display:none;
+}
+ 
+.page-node-1230386 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > .collapsed, 
+.page-node-1230386 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-198786,
+.page-node-1230386 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197476,
+.page-node-1230386 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197606,
+.page-node-447262 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197821,
+.page-node-1230511 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197606,
+.page-node-1230511 .menu-block-wrapper.menu-block-1.menu-name-menu-dcra-nav2.parent-mlid-0.menu-level-2 > .menu-sub > li.menu-mlid-197801{
+	display:block;
+}
+#section-header .menu-name-menu-dc-top-menu ul {
+	max-width: 390px;
+	float: right;
+}
+/* End of Global Styles */
+/* Narrow Styles */
+@media all and (min-device-width: 740px) and (min-width: 740px), (max-device-width: 800px) and (min-width: 740px) and (orientation: landscape){
+  #zone-branding1 {
+    margin-top: -15px;
+  }
+  #section-header .menu-name-menu-dc-top-menu ul {
+    max-width: 100%;
+    float: none;
+  }
+
+}
+/* End of Narrow Styles */
+/* Normal Styles */
+@media all and (min-width: 980px) and (min-device-width: 980px), all and (max-device-width: 1024px) and (min-width: 1024px) and (orientation:landscape){
+  #zone-branding1 {
+    margin-bottom: 0px;
+    margin-top: 20px;
+  }
+  #region-branding1 {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+}
+/* End of Normal Styles */
+/* Wide Styles */
+@media all and (min-width: 1220px) and (orientation:landscape){
+  #zone-branding1 {
+    margin-bottom: 5px;
+    margin-top: 20px;
+  }
+  #region-branding1 {
+    margin-left: 89px;
+    margin-right: 0px;
+    width: 280px !important;
+  }
+}
+/* End of Wide Styles */
+</style>
+<div class="dots">&nbsp;</div>
+
+<div class="block block-menu-block" id="block-menu-block-2">
+<h2 class="element-invisible element-invisible">DC Agency Top Menu</h2>
+
+<div class="content">
+<div class="menu-block-wrapper menu-block-2 menu-name-menu-dc-top-menu parent-mlid-0 menu-level-1">
+<ul class="menu clearfix">
+	<li class="first leaf menu-mlid-487 menu-487"><a href="https://311.dc.gov" title="311 Online">311 Online</a></li>
+	<li class="leaf"><a href="https://dc.gov/directory" title="Agency Directory">Agency Directory</a></li>
+	<li class="leaf"><a href="https://dc.gov/online-services" title="Online Services">Online Services</a></li>
+	<li class="last"><a href="https://dc.gov/page/dcgov-accessibility-policy" title="Accessibility">Accessibility</a></li>
+</ul>
+</div>
+
+<div class="navigation" id="navigation">&nbsp;</div>
+</div>
+
+<div class="zone zone-branding clearfix" id="zone-branding1">
+<div class="grid-6 region region-branding" id="region-branding1">
+<div class="region-inner region-branding-inner">
+<div class="branding-data clearfix">
+<div class="logo-img"><a href="http://dc.gov/" rel="home" title="DC.gov Home"><img alt="DC.gov Home" id="logo" src="/sites/default/files/dc/dcgov_logo.jpg" /></a></div>
+</div>
+
+<div class="logo-text"><a href="http://mayor.dc.gov" title="Mayor Muriel Bowser">Mayor Muriel Bowser</a></div>
+</div>
+</div>
+
+<div class="grid-18 region region-branding-second" id="region-branding-second">
+<div class="region-inner region-branding-second-inner">
+<div class="block block-block block-83 block-block-83 odd block-without-title" id="block-block-83">
+<div class="block-inner clearfix">
+<div class="content clearfix">
+<form accept-charset="UTF-8" action="javascript:submitForm()" id="search_form" method="get" name="search_form">
+<fieldset>
+<div class="dcSearchContainer">
+<div class="dcSearchContainerInner"><button alt="Submit Button" class="dcSearchButtonContainer" onclick="submitForm()" title="Submit Button"><div class="dcSearchButtonIcon"></div></button>
+<!-- Paste this to fix code button tag above, Drupal doesn't like <div> tag inside of a button tag   
+<button alt="Submit Button" class="dcSearchButtonContainer" onclick="submitForm()" title="Submit Button"><div class="dcSearchButtonIcon"></div></button> -->
+
+<div class="dcSearchForm"><input autocomplete="on" class="dcSearchFormInput" name="query" onblur="if(this.value=='What are you looking for today?'){this.value='What are you looking for today?'}" onfocus="if(this.value=='What are you looking for today?'){this.value=''}" placeholder="What are you looking for today?" style="padding: 0px; margin: 0px;" title="Type keyword, phrase or question" type="text" value="" /><br />
+<input name="affiliate" type="hidden" /></div>
+</div>
+</div>
+
+<div class="site-filter dcSearchFilter">
+<div class="inner_site-filter"><script type="text/JavaScript">
+	                  var siteNameOnly = document.getElementById("site-name-only").innerHTML + "";
+                          var siteNameOnlyFix = "dc_" + siteNameOnly.replace(/\s+/g, '_');
+	                  if(siteNameOnly != "") {
+	                    document.write('&nbsp;');
+	                    document.write('<input class="filter-radio" id="radio_all" name="emb" title="DC.gov" type="radio" value="0" />');
+	                    document.write('&nbspDC.gov&nbsp;');
+	                    document.write('<input checked="checked" class="filter-radio" id="site_search" name="emb" title=" type=');
+	                    document.write(siteNameOnly);
+	                    document.write('" type="radio" value="1" />');
+	                    document.write('&nbsp;' + location.host + '');}
+
+	                  function submitForm(){
+	                    if(!document.search_form.emb[0].checked)  {
+	                      document.search_form.affiliate.value=siteNameOnlyFix.substring(0, 33);
+	                      document.search_form.action="https://search.usa.gov/search";
+	                      document.search_form.submit();}
+else{
+
+document.search_form.affiliate.value="dc_dcgov";
+	                      document.search_form.action="https://search.usa.gov/search";
+	                      document.search_form.submit();
+}
+}
+	                
+
+</script></div>
+</div>
+</fieldset>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<h1 class="agency_title"><script type=text/JavaScript>document.write(document.getElementById("site-slogan").innerHTML);</script></h1>
+</div>
+<script type="text/javascript">
+var site = window.location.host.split('.');
+
+//<![CDATA[
+      var usasearch_config = { siteHandle:site[0] };
+
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = "https://search.usa.gov/javascripts/remote.loader.js";
+      document.getElementsByTagName("head")[0].appendChild(script);
+
+//]]>
+
+jQuery(document).ready(function() {
+	  function checkresponsiveOea() {
+
+	  	console.log("At least im loading");
+	  	//Create the views filter for mobile -NR
+		    if (jQuery('#mobile-filter').length < 1) {
+		        jQuery(".view-oea-decisions .view-content").before("<div id='mobile-filter'><div id='mobile-filter-container'></div></div>");
+		        //jQuery("#mobile-filter").before("<div class='filterButton'><a href='#'>Filter</a></div");
+		    }
+	  }
+
+	  checkresponsiveOea(); //Call the checkresponsive() to initialize the components
+	  
+	  function resizeStuffOea() {
+
+	      //Show mobile Views filter -NR
+	      if (jQuery(window).width() < 963) {
+	          jQuery("#views-exposed-form-oea-decisions-page").appendTo('#mobile-filter-container');
+
+	        }// End Show mobile Views filter -NR   End < 963
+	    
+	      //Hide mobile Views filter -NR
+	      if (jQuery(window).width() > 963) {
+	          jQuery("#views-exposed-form-oea-decisions-page").insertBefore("#block-views-agency-information-block");
+	      console.log("i should be showing");
+	      }// End Hide mobile Views filter -NR  End > 963
+
+  		} /* end resizeStuff() function */
+
+resizeStuffOea();
+	  // jQuery(function(){
+	  //   var TO = false;
+	  //   jQuery(window).resize(function () {
+	  //     if (TO !== false) {
+	  //         clearTimeout(TO);
+	  //     }
+	  //     TO = setTimeout(resizeStuffOea, 10); //100 is time in miliseconds
+	  //   }).resize();
+	  // });
+
+//ready.dc.gov language link fix
+if( jQuery(".domain-preview-ready-dc-gov").length > 0) {
+	var currentLanguage = jQuery("html").attr("lang");
+console.log(currentLanguage);
+	if (currentLanguage != 'en'){	
+console.log("language not english");
+	jQuery("article .field-name-body a").each(function(){
+console.log("inside link function");
+		var newlink =	jQuery(this).attr("href").replace('/node/', '/' + currentLanguage + '/node/');
+		jQuery(this).attr("href", newlink);
+    	}
+	);
+	}
+}
+
+});
+
+
+
+</script>
+<style type="text/css">#edit-field-oea-decision-type-tid{max-width:200px;}.view-oea-decisions{margin-top:100px;}
+
+/* 
+#block-menu-block-2 .menu-block-2 a:link,
+.region-sidebar-first-inner a:link,
+#content-start .content a:link
+{font-weight: bold!important;}
+*/
+.front .zone-content-wrapper .region-agency-home-3col .item-list {display:block;margin-left: 10px;}
+/* 
+styles used to force rtf languages pages like arabic to flow ltr, except for the content section;
+styles should be moved to appropriate .rtl theme css file;
+ */
+html{
+  direction:ltr;
+}
+html[dir="rtl"] #content-start{
+  direction:rtl;
+}
+</style>    </div>
+  </div>
+</div><div class="block block-views block-alerts-emergency-alerts-block block-views-alerts-emergency-alerts-block even block-without-title" id="block-views-alerts-emergency-alerts-block">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-alerts view-id-alerts view-display-id-emergency_alerts_block view-dom-id-80ddf963b3e9a61a2f37448b4c9aa79e">
+        
+  
+  
+      <div class="view-content">
+        <div class="views-row views-row-1 views-row-odd views-row-first views-row-last">
+      
+          <p class="rtecenter"><a href="http://coronavirus.dc.gov" title="coronavirus.dc.gov">coronavirus.dc.gov</a><br />
+<a href="https://coronavirus.dc.gov/sites/default/files/dc/sites/coronavirus/page_content/attachments/MMB-Situational-Update-Presentation_102620.pdf">Read Mayor Bowser&rsquo;s Presentation on DC&rsquo;s COVID-19 Situational Update: October 26.</a><br />
+<a href="https://coronavirus.dc.gov/phasetwo" title="Mayor Bowser Extends Stay at Home Order and Public Health Emergency Through June 8">DC Entered Phase Two of Reopening on June 22. View the Guidance.</a></p>
+    </div>
+    </div>
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div>  </div>
+</div>
+  </div>
+</div><div id="zone-header-wrapper" class="zone-wrapper zone-header-wrapper clearfix"> 
+  <div id="stickyhideout" style="display: none;">
+  <div class="dclogo_small_desktop" style="display: block;"><a title="DC.Gov Home" href="/">
+   <img title="DC.Gov Logo" alt="DC.Gov Logo" src="/sites/default/files/dc/shared_assets/dc_home_logo2_small.png">
+  </a></div>
+  <div class="sh_agency_title">
+   <script type="text/JavaScript">document.write(document.getElementById("site-slogan").innerHTML);</script>
+  </div>
+  <div class="header_search">
+    <a href="javascript:void(0)">
+      <div class="header_search_icon"><img alt="Search DC.gov" title="Search DC.gov" src="/sites/default/files/dc/shared_assets/search2.png"></div>
+    </a>
+    <div class="search_dropdown" style="display: none;">
+      <div class="content clearfix">
+        <form name="gs2" method="get" id="gs2" action="javascript:submitForm2()">
+          <div class="header_search_form_container">
+            <h2 class="element-invisible">Search form</h2>
+            <a title="Close Search" class="close" href="javascript:void(0)">X</a>
+            <div class="header_search_form">
+              <label class="element-invisible">Search </label>
+              <input type="text" class="form-text" maxlength="128" size="40" value="" name="q" id="header-search-block-input" title="Enter the terms you wish to search for.">
+            </div>
+            <div id="header-search-from-button" class="header-form-button">
+              <input type="submit" title="Search" class="form-submit" value="Go" name="op" id="edit-submit">
+            </div>
+          </div>
+          <input type="hidden" value="xml_no_dtd" name="output">
+          <input type="hidden" value="UTF-8" name="oe">
+          <input type="hidden" value="UTF-8" name="ie">
+          <input type="hidden" value="dc_v2" name="client">
+          <input type="hidden" value="dc_v2" name="proxystylesheet">
+          <input type="hidden" name="site">
+          <script async="" src="//www.google-analytics.com/analytics.js"></script>
+          <script id="twitter-wjs" src="//platform.twitter.com/widgets.js"></script>
+          <script type="text/JavaScript">
+            function submitForm2(){
+              document.gs2.action="http://google.dc.gov/search"; document.gs2.submit();
+            }
+          </script>
+        </form>    
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="zone-header" class="zone zone-header clearfix container-12">
+    <div class="grid-24 region region-header-first" id="region-header-first">
+  <div class="region-inner region-header-first-inner">
+    <div class="block block-domain-conf block-domain-main-links block-domain-conf-domain-main-links odd block-without-title" id="block-domain-conf-domain-main-links">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <ul class="menu-sub"><li class="first collapsed"><a href="/" title="">DDOT Home</a></li>
+<li class="expanded"><a href="/page/ddot-services" title="DDOT Services">DDOT Services</a><ul class="menu-sub"><li class="first leaf"><a href="/Services" title="Services A-Z">See All Services A-Z</a></li>
+<li class="collapsed"><a href="/page/request-repairs" title="Request Repairs">Request Repairs</a></li>
+<li class="collapsed"><a href="/page/permit-applications" title="Permit Applications">Permit Applications</a></li>
+<li class="leaf"><a href="/service/notice-infraction">Notice of Infraction</a></li>
+<li class="leaf"><a href="/service/ddot-notice-intent" title="DDOT Notice of Intent">Notice of Intent</a></li>
+<li class="collapsed"><a href="/page/request-transportation-services" title="Request Transportation Services">Request Transportation Services</a></li>
+<li class="collapsed"><a href="/service/public-space-management" title="Public Space Management">Public Space Management</a></li>
+<li class="collapsed"><a href="/page/traffic-safety-assessment" title="Provide Traffic Safety">Provide Traffic Safety</a></li>
+<li class="collapsed"><a href="/page/apply-grant" title="Apply for a Grant">Apply for a Grant</a></li>
+<li class="collapsed"><a href="/page/parking-services" title="Parking Services">Parking Services</a></li>
+<li class="last collapsed"><a href="/service/civil-rights-program-and-services" title="Civil Rights Program and Services">Civil Rights Program and Services</a></li>
+</ul></li>
+<li class="expanded"><a href="/page/projects-and-planning" title="Projects and Planning">Projects and Planning</a><ul class="menu-sub"><li class="first expanded"><a href="/page/bus-priority" title="Bus Priority">Bus Priority</a><ul class="menu-sub"><li class="first leaf"><a href="/carfreelanes">Car Free Lanes for Buses and Bikes</a></li>
+<li class="leaf"><a href="/page/h-i-streets-nw-bus-lanes">H &amp; I Streets NW Bus Lane</a></li>
+<li class="leaf"><a href="/page/k-street-transitway" title="K Street Transitway">K Street Transitway</a></li>
+<li class="leaf"><a href="/page/14th-street-nw-bus-improvements" title="14th Street NW Bus Improvements">14th Street NW Bus Improvements</a></li>
+<li class="leaf"><a href="https://www.16thstreetnwbus.com/" title="16th Street NW Bus Lanes">16th Street NW Bus Lanes</a></li>
+<li class="last leaf"><a href="https://www.pennavese.com/" title="Pennsylvania Ave SE Corridor Study">Pennsylvania Ave SE Corridor Study</a></li>
+</ul></li>
+<li class="collapsed"><a href="/page/capital-infrastructure-projects" title="Capital Infrastructure Projects">Capital Infrastructure Projects</a></li>
+<li class="collapsed"><a href="/page/development-review" title="DDOT Development Review">Development Review</a></li>
+<li class="collapsed"><a href="/page/environment" title="Environment">Environment</a></li>
+<li class="collapsed"><a href="/page/ddot/neighborhood-planning-0" title="Project Planning">Project Planning</a></li>
+<li class="collapsed"><a href="/page/standards-and-guidelines" title="Standards and Guidelines">Standards and Guidelines</a></li>
+<li class="collapsed"><a href="/page/studies-and-research" title="Studies and Research">Studies and Research</a></li>
+<li class="last leaf"><a href="/page/transportation-alternatives-program" title="Transportation Alternatives Program">Transportation Alternatives Program</a></li>
+</ul></li>
+<li class="expanded"><a href="/page/your-street" title="On Your Street">On Your Street</a><ul class="menu-sub"><li class="first collapsed"><a href="/bikesandpeds" title="Bicycles and Pedestrians">Bicycles and Pedestrians</a></li>
+<li class="collapsed"><a href="/page/street-carsharing-program" title="On-Street Carsharing Program">On-Street Carsharing Program</a></li>
+<li class="collapsed"><a href="/page/mass-transit-district-columbia" title="Mass Transit in DC">Mass Transit in DC</a></li>
+<li class="collapsed"><a href="/page/public-space-management" title="Public Space Management - aerial view of the District">Public Space Management</a></li>
+<li class="collapsed"><a href="/page/safety-programs-and-safety-data" title="Safety Programs">Safety Programs</a></li>
+<li class="collapsed"><a href="/page/traffic-management-programs" title="Traffic Management Programs">Traffic Management Programs</a></li>
+<li class="collapsed"><a href="/page/ddot-urban-forestry" title="DDOT Urban Forestry">Urban Forestry</a></li>
+<li class="last leaf"><a href="/page/ddot-interactive-maps" title="DDOT Interactive Maps">DDOT Interactive Maps</a></li>
+</ul></li>
+<li class="last expanded"><a href="/page/about-ddot" title="About DDOT">About DDOT</a><ul class="menu-sub"><li class="first collapsed"><a href="/page/ddot-who-we-are" title="About the DC Department of Transportation (DDOT) - Who We Are">Who We Are</a></li>
+<li class="leaf"><a href="/biography/jeff-marootian" title="Director&#039;s Biography">Director&#039;s Biography</a></li>
+<li class="collapsed"><a href="/page/ddot-senior-leadership-team" title="Meet Our Senior Leadership">Meet Our Senior Leadership</a></li>
+<li class="collapsed"><a href="/page/ddot-agency-organization" title="DDOT Agency Organization">Agency Organization</a></li>
+<li class="collapsed"><a href="/page/transportation-capital-budget-plans" title="Transportation Capital Budget Plans">Transportation Capital Budget Plans</a></li>
+<li class="collapsed"><a href="/procurement" title="Contract and Procurement">Contracting and Procurement</a></li>
+<li class="leaf"><a href="/page/open-government-and-foia-ddot" title="Open Government and FOIA">Open Government and FOIA</a></li>
+<li class="leaf"><a href="/newsroom" title="DDOT Newsroom">Newsroom</a></li>
+<li class="leaf"><a href="/external-link/publications-ddot" title="DDOT Publications posted on Scribd.com">Scribd.com DDOT Publications</a></li>
+<li class="leaf"><a href="/publications-list?sort_order=DESC" title="View All DDOT Publications">Publications</a></li>
+<li class="leaf"><a href="/page/for-media" title="For the Media">For the Media</a></li>
+<li class="last leaf"><a href="/communityengagement" title="For ANCs">For ANCs</a></li>
+</ul></li>
+</ul>    </div>
+  </div>
+</div>  </div>
+</div> 
+  </div>
+</div>
+</header>    
+      <section id="section-content" class="section section-content">
+  <div id="zone-content-wrapper" class="zone-wrapper zone-content-wrapper clearfix">  
+  <div id="zone-content" class="zone zone-content clearfix container-24">
+
+    <aside class="grid-6 region region-sidebar-first" id="region-sidebar-first" aria-labelledby="region-sidebar-first">
+  <div class="region-inner region-sidebar-first-inner">
+    <div class="block block-views block-agency-information-block block-views-agency-information-block odd block-without-title" id="block-views-agency-information-block">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-agency-information view-id-agency_information view-display-id-block view-dom-id-c1f25d645688972f44fbafb068db862d">
+            <div class="view-header">
+      <h2>District Department of Transportation<br></h2>    </div>
+  
+  
+  
+      <div class="view-content">
+        <div class="views-row views-row-1 views-row-odd views-row-first views-row-last">
+      
+  <div class="views-field views-field-field-image">        <div class="field-content"><a href="/"><img typeof="foaf:Image" src="https://ddot.dc.gov/sites/default/files/styles/callout_interior_graphic/public/dc/sites/ddot/agency_content/images/ddot_log_white_background_lead_image.PNG?itok=a3iK40qy" width="199" height="150" alt="DDOT logo" title="DDOT logo" /></a></div>  </div>  
+  <div class="views-field views-field-nothing">        <span class="field-content"><div class="view-agency-information-details">
+<strong>Office Hours</strong><br>Monday to Friday, 8:15 am to 4:45 pm<br><br> <strong>Connect With Us</strong><br>55 M Street, SE, Suite 400, Washington, DC 20003
+<br>Phone: (202) 673-6813<br>
+Fax: (202) 671-0650<br>
+TTY: (202) 673-6813<br>
+
+Email: <a href="/cdn-cgi/l/email-protection#472323283307232469202831" title="ddot@dc.gov"><span class="__cf_email__" data-cfemail="eb8f8f849fab8f88c58c849d">[email&#160;protected]</span></a><br><br>
+<a href="https://www.facebook.com/DDOTDC"><img src="/sites/default/files/dc/shared_assets/social_icons/facebook.png" title="facebook" alt="facebook"></a>
+<a href="https://twitter.com/ddotdc"><img src="/sites/default/files/dc/shared_assets/social_icons/twitter.png" title="twitter" alt="twitter"></a>
+<a href="https://www.youtube.com/ddotvideos"><img src="/sites/default/files/dc/shared_assets/social_icons/youtube.png" title="youtube" alt="youtube"></a>
+<a href="https://www.flickr.com/photos/ddotphotos/sets/"><img src="/sites/default/files/dc/shared_assets/social_icons/flickr.png" title="flickr" alt="flickr"></a>
+<a href="https://www.scribd.com/ddotdc/shelf"><img src="/sites/default/files/dc/shared_assets/social_icons/scribd.png" title="scribd" alt="scribd"></a>
+<a href="http://ddotdish.com"><img src="/sites/default/files/dc/shared_assets/social_icons/blog.png" title="blog" alt="blog"></a>
+<a href="http://ddotdc.tumblr.com/"><img src="/sites/default/files/dc/shared_assets/social_icons/tumblr.png" title="tumblr" alt="tumblr"></a>
+<a href="/cdn-cgi/l/email-protection#ee8a8a819ac08d8183839b80878d8f9a8781809dae8a8dc0898198"><img src="/sites/default/files/dc/shared_assets/social_icons/email.png" title="email" alt="email"></a>
+<a href="https://www.pinterest.com/ddotdc/"><img src="/sites/default/files/dc/shared_assets/social_icons/pinterest.png" title="pinterest" alt="pinterest"></a>
+<a href="https://www.instagram.com/ddotdc/?hl=en"><img src="/sites/default/files/dc/shared_assets/social_icons/instagram.png" title="instagram" alt="instagram"></a>
+<div class="views-field-field-askthedirectortitle"><a href="http://dcforms.dc.gov/webform/district-department-transportation-ask-director" title="Ask the Director" target="_blank">Ask the Director</a><br></div>
+<a href="https://oca.dc.gov/node/160652" title="Agency Performance" target="_blank">Agency Performance</a><br>
+
+<div class="field field-name-field-language-support field-type-node-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="/page/ddot-amharic">Amharic (አማርኛ)</a></div><div class="field-item odd"><a href="/page/ddot-chinese">Chinese (中文)</a></div><div class="field-item even"><a href="/page/ddot-french">French (Français)</a></div><div class="field-item odd"><a href="/page/ddot-korean">Korean (한국어)</a></div><div class="field-item even"><a href="/page/ddot-spanish">Spanish (Español)</a></div><div class="field-item odd"><a href="/page/ddot-vietnamese">Vietnamese (Tiếng Việt)</a></div></div></div>
+</div></span>  </div>  </div>
+    </div>
+  
+  
+  
+  
+      <div class="view-footer">
+      <br style="clear:both" />    </div>
+  
+  
+</div>    </div>
+  </div>
+</div><div class="block block-views block-d57ea9063772fb95c21cdfa73d7c2d80 block-views-d57ea9063772fb95c21cdfa73d7c2d80 even block-without-title" id="block-views-d57ea9063772fb95c21cdfa73d7c2d80">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-agency-information view-id-agency_information view-display-id-agency_director view-dom-id-687de1e86529a879b26efb13476327b5">
+        
+  
+  
+      <div class="view-content">
+        <div class="views-row views-row-1 views-row-odd views-row-first views-row-last">
+      
+  <div class="views-field views-field-field-image">        <div class="field-content"><a href="/biography/jeff-marootian"><img typeof="foaf:Image" src="https://ddot.dc.gov/sites/default/files/styles/thumbnail/public/dc/sites/ddot/biography_content/images/Jeff%20Fed%20Photo%20web_0.jpg?itok=R9rYF4aU" width="75" height="56" alt="DDOT Director Jeff Marootian" title="District Department of Transportation Director" /></a></div>  </div>  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="/biography/jeff-marootian">Jeff Marootian</a></span>  </div>  
+  <div class="views-field views-field-field-position">        <div class="field-content">Director</div>  </div>  </div>
+    </div>
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div>  </div>
+</aside>
+<div class="grid-12 region region-content" id="region-content">
+  <div class="region-inner region-content-inner">
+	 <div class="block block-text-resize">
+	<a href="javascript:;" class="changer" id="text_resize_decrease"><sup>-</sup>A</a> <a href="javascript:;" class="changer" id="text_resize_increase"><sup>+</sup>A</a><div id="text_resize_clear"></div>	 </div>
+
+<div class="pane-add-this">
+	<a class="addthis_button" href="https://www.addthis.com/bookmark.php?v=300&amp;pubid=ra-4dc44024632b89e6">
+	<img alt="Bookmark and Share" height="16" src="https://s7.addthis.com/static/btn/v2/lg-share-en.gif" style="border:0" width="125" /></a>
+	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#async=1#pubid=ra-4dc44024632b89e6"></script>
+	<script type="text/javascript">var addthis_config = {ui_click: true}</script>
+</div>
+
+<script src="//cdn1.readspeaker.com/script/6295/webReader/webReader.js?pids=wr" type="text/javascript"></script>
+<div id="readspeaker_button1" class="rs_skip rsbtn rs_preserve">
+    <a rel="nofollow" class="rsbtn_play" accesskey="L" title="Listen to this page using ReadSpeaker webReader" href="//app-na.readspeaker.com/cgi-bin/rsent?customerid=6295&amp;lang=en_us&amp;readid=content-start&amp;url=https://ddot.dc.gov/page/dockless-vehicle-permits-district">
+        <span class="rsbtn_left rsimg rspart"><span class="rsbtn_text"><span>Listen</span></span></span>
+        <span class="rsbtn_right rsimg rsplay rspart"></span>
+    </a>
+</div>
+
+<div id="content-start">
+    <a id="main-content"></a>
+                <h1 class="title" id="page-title">Dockless Vehicle Permits in the District</h1>
+                        <div class="block block-system block-main block-system-main odd block-without-title" id="block-system-main">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <article about="/page/dockless-vehicle-permits-district" typeof="foaf:Document" class="node node-page node-published node-not-promoted node-not-sticky author-michellephipps-evans odd clearfix" id="node-page-1323886">
+        <span property="dc:title" content="Dockless Vehicle Permits in the District" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="0" datatype="xsd:integer" class="rdf-meta element-hidden"></span>    
+  
+  <div class="content clearfix">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><h3><strong>New Emergency and Proposed rulemaking governing the Dockless Vehicle Permit Program</strong></h3>
+
+<p>The primary impact of this rulemaking is to allow dockless fleet increases&nbsp;based on specific performance metrics. The rulemaking also addresses criteria for deferral or waiver of permit fees, and definitively states the level of confidentiality with which DDOT will treat required data submissions. As an emergency rulemaking, it went into effect June 11, 2020 and will remain in effect for 120 days (until October 9, 2020) and was published in the DC Register as a proposed rulemaking on June 19, 2020. Written comments may be filed until 30 days&nbsp;with Dan Emerine, Manager, Policy and Legislative Affairs Division, Office of the Director, District Department of Transportation, 55 M Street, S.E., 7th Floor, Washington D.C. 20003. An interested person may also send comments electronically to&nbsp;<a href="/cdn-cgi/l/email-protection#f08085929c99938380919395de809f9c999389b09493de979f86cf8385929a959384cdb59d958297959e9389d5c2c0919e94d5c2c0a0829f80839594d5c2c0a2859c959d919b999e97d5c2c0969f82d5c2c0b99e9382959183999e97d5c2c0b49f939b9c958383d5c2c0b69c959584d5c2c0a3998a95"><span class="__cf_email__" data-cfemail="6e1e1b0c02070d1d1e0f0d0b401e0102070d172e0a0d40090118">[email&#160;protected]</span></a>.&nbsp;</p>
+
+<ol>
+	<li><a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/emergency%20and%20proposed%20rulemaking%20for%20increasing%20dockless%20fleet%20size%20%286-11-20%29%20%28238157xBAE61%29.pdf">New Emergency and Proposed Rulemaking governing the Dockless Vehicle Permit Program</a></li>
+	<li><a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/FAQ%20Rulemaking.pdf">Frequently Asked Questions</a></li>
+	<li><a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2020.6.12%20Format%20for%20fleet%20increase%20requests.pdf">How to request fleet increases for operators</a></li>
+</ol>
+
+<hr />
+<p>Applications for the District&rsquo;s bike and scooter share programs are currently closed. For further information regarding these programs&nbsp;and&nbsp;to&nbsp;sign-up for the&nbsp;dockless&nbsp;mobility mailing list, please&nbsp;email&nbsp;&nbsp;<a href="/cdn-cgi/l/email-protection#6e0a010d05020b1d1d4003010c0702071a172e0a0d40090118"><span class="__cf_email__" data-cfemail="6c08030f0700091f1f4201030e05000518152c080f420b031a">[email&#160;protected]</span></a>.&nbsp;&nbsp;</p>
+
+<p>Below are the&nbsp;current&nbsp;permitted&nbsp;dockless&nbsp;mobility operators and their&nbsp;fleet caps for the remainder of&nbsp;calendar year&nbsp;2020.&nbsp;</p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:500px;">
+	<tbody>
+		<tr>
+			<td><strong>Company</strong></td>
+			<td><strong>Number of Vehicles</strong></td>
+		</tr>
+		<tr>
+			<td>Bird (scooter)</td>
+			<td>720</td>
+		</tr>
+		<tr>
+			<td>Bolt (scooter)</td>
+			<td>300</td>
+		</tr>
+		<tr>
+			<td>Hellbiz (bike)</td>
+			<td>1,470</td>
+		</tr>
+		<tr>
+			<td>Jump (bike)</td>
+			<td>2,500</td>
+		</tr>
+		<tr>
+			<td>Jump (scooter)&nbsp;</td>
+			<td>720</td>
+		</tr>
+		<tr>
+			<td>Lime (scooter)</td>
+			<td>720</td>
+		</tr>
+		<tr>
+			<td>Lyft (scooter)</td>
+			<td>1,020</td>
+		</tr>
+		<tr>
+			<td>Razor (scooter)</td>
+			<td>720</td>
+		</tr>
+		<tr>
+			<td>Skip (scooter)</td>
+			<td>2,500</td>
+		</tr>
+		<tr>
+			<td>Spin (scooter)</td>
+			<td>1,720</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3><strong>Historical Information&nbsp;</strong></h3>
+
+<p><strong>2020 Permit Application</strong></p>
+
+<p>The permit application period is currently closed.&nbsp;</p>
+
+<ol>
+	<li><a href="/sites/default/files/dc/sites/ddot/2020%20Permit%20Application.pdf">Application</a></li>
+	<li><a href="https://docs.google.com/document/d/1G2ddANcXl3lShCZInV3uX2NTBfRRu4Fm-tiaCi203QM/edit?usp=sharing">FAQs</a></li>
+	<li><a href="/sites/default/files/dc/sites/ddot/2019.11.6%20Shared%20dockless%202020%20Terms%20and%20Conditions%20scooter.pdf">Scooter Terms and Conditions</a></li>
+	<li><a href="/sites/default/files/dc/sites/ddot/2019.11.6%20Shared%20dockless%202020%20Terms%20and%20Conditions%20bike.pdf">Bike Terms and Conditions</a></li>
+	<li><a href="/sites/default/files/dc/sites/ddot/2019.11.6%20Dockless%20Permit%20TC%20Attatchments.pdf">Addendum to the Terms and Conditions</a></li>
+</ol>
+
+<hr />
+<p><strong>Related Documents</strong></p>
+
+<ul>
+	<li>See the&nbsp;<a href="https://ddot.dc.gov/page/application-programming-interface-or-api">Dockless Data and Application Programming Interface</a>.</li>
+	<li>See the goDCgo&nbsp;<a href="http://blog.godcgo.com/dockless-bikeshare-in-the-district-faqs">Frequently Asked Questions</a>&nbsp;on Dockless Vehicles</li>
+	<li>See the Virginia Tech<a href="https://ralphbu.files.wordpress.com/2018/05/dc-dockless-bikeshare_a-first-look_may_10_2018_publication.pdf">&nbsp;D.C. Dockless Bikeshare: A First Look</a></li>
+</ul>
+</div></div></div><div class="field field-name-field-attachment field-type-file field-label-above"><div class="field-label">Attachment(s):&nbsp;</div><div class="field-items"><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2020%20Permit%20Application.pdf" type="application/pdf; length=258460" title="2020 Permit Application.pdf">2020 Dockless Sharing Vehicles Permit Application</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.12.6%20Applications%20Matrix%20v3.pdf" type="application/pdf; length=171529" title="2019.12.6 Applications Matrix v3.pdf">2020 Dockless Vehicle Sharing Program Permit Scoring Outcomes </a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.11.6%20Shared%20dockless%202020%20Terms%20and%20Conditions%20bike.pdf" type="application/pdf; length=261406" title="2019.11.6 Shared dockless 2020 Terms and Conditions bike.pdf">2020 Dockless Terms and Conditions Bicycles or Motorized Bicycles</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.11.6%20Shared%20dockless%202020%20Terms%20and%20Conditions%20scooter.pdf" type="application/pdf; length=260600" title="2019.11.6 Shared dockless 2020 Terms and Conditions scooter.pdf">2020 Dockless Terms and Conditions Scooters</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.11.6%20Dockless%20Permit%20TC%20Attatchments.pdf" type="application/pdf; length=1228350" title="2019.11.6 Dockless Permit TC Attatchments.pdf">2020 Dockless Permit Attachment A</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.11.7%20Shared%20dockless%20TC%20Comment%20Response.pdf" type="application/pdf; length=9483334" title="2019.11.7 Shared dockless TC Comment Response.pdf">2020 Shared Dockless Vehicle Program - Terms and Conditions for Public Comment</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/MID%20YEAR%20FAQ%202019%20Dockless%20Application.pdf" type="application/pdf; length=84004" title="MID YEAR FAQ 2019 Dockless Application.pdf">2019 MID YEAR: Dockless FAQ</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/MID%20YEAR%20Permit%20Application%20Instructions%202019.pdf" type="application/pdf; length=439527" title="MID YEAR Permit Application Instructions 2019.pdf">2019 MID YEAR: Dockless Permit Application Instructions </a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/MID%20YEAR%202019%20Permit%20Application.pdf" type="application/pdf; length=264329" title="MID YEAR 2019 Permit Application.pdf">2019 MID YEAR: Permit Application </a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="File" title="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" src="/modules/file/icons/x-office-spreadsheet.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Data%20Report%20Template%20Phase%20II.xlsx" type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; length=42829">Data Report Template Phase II.xlsx</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Final%20Permit%20Application%202019%20-%20Updated%2011.14.18.pdf" type="application/pdf; length=602483" title="Final Permit Application 2019 - Updated 11.14.18.pdf">UPDATED: 2019 Final Permit Application</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Dockless%20Permit%20Application%20Instructions%20-%202019%20-%20Deadline%20Extension.pdf" type="application/pdf; length=785983" title="Dockless Permit Application Instructions - 2019 - Deadline Extension.pdf">UPDATED: Dockless Permit Application Instructions 2019 Deadline Extension</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Dockless%20Vehicle%20Sharing%20Terms%20and%20Conditions%20-%20Phase%20II%20-%20Bicycles%20-%2012.19.18.pdf" type="application/pdf; length=212724" title="Dockless Vehicle Sharing Terms and Conditions - Phase II - Bicycles - 12.19.18.pdf">Dockless Terms and Conditions Bicycles</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Dockless%20Terms%20and%20Conditions%20-%20Phase%20II%20-%20Scooters%20-%2012.19.18.pdf" type="application/pdf; length=493335" title="Dockless Terms and Conditions - Phase II - Scooters - 12.19.18.pdf">Dockless Terms and Conditions Scooters</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2019.7.29%20Dockless%20Vehicles%20LICP.pdf" type="application/pdf; length=165999" title="2019.7.29 Dockless Vehicles LICP.pdf">Dockless Low-Income Customer Plan</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/Dockless%20Appeals%20Process.pdf" type="application/pdf; length=192751" title="Dockless Appeals Process.pdf">Shared Dockless Vehicle Program Procedures for Review of Permit Denials </a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/2020.6.12%20Format%20for%20fleet%20increase%20requests.pdf" type="application/pdf; length=83179" title="2020.6.12 Format for fleet increase requests.pdf">Fleet Increase Request Directions</a></span></div><div class="field-item odd"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/FAQ%20Rulemaking.pdf" type="application/pdf; length=156162" title="FAQ Rulemaking.pdf">Dockless Emergency and Proposed Rulemaking Frequently Asked Questions</a></span></div><div class="field-item even"><span class="file"><img class="file-icon" alt="PDF icon" title="application/pdf" src="/modules/file/icons/application-pdf.png" /> <a href="https://ddot.dc.gov/sites/default/files/dc/sites/ddot/page_content/attachments/emergency%20and%20proposed%20rulemaking%20for%20increasing%20dockless%20fleet%20size%20%286-11-20%29%20%28238157xBAE61%29.pdf" type="application/pdf; length=97817" title="emergency and proposed rulemaking for increasing dockless fleet size (6-11-20) (238157xBAE61).pdf">Emergency and Proposed Rulemaking for Increasing Dockless Fleet Size</a></span></div></div></div><div class="field field-name-field-related field-type-node-reference field-label-above"><div class="field-label">Related Content:&nbsp;</div><div class="field-items"><div class="field-item even"><a href="/page/dockless-api">Dockless Data and Application Programming Interface (API)</a></div><div class="field-item odd"><a href="/page/making-dockless-vehicles-accessible-all-washingtonians">Making Dockless Vehicles Accessible to all Washingtonians</a></div><div class="field-item even"><a href="/page/2019-district-columbia-dockless-vehicle-permit-application-frequently-asked-questions">2019 District of Columbia Dockless Vehicle Permit Application - Frequently Asked Questions</a></div></div></div>  </div>
+  
+  <div class="clearfix">
+          <nav class="links node-links clearfix"></nav>
+    
+      </div>
+</article>
+    </div>
+  </div>
+</div>    </div>
+  </div>
+</div>
+<aside class="grid-6 region region-sidebar-second" id="region-sidebar-second" aria-labelledby="region-sidebar-second">
+  <div class="region-inner region-sidebar-second-inner">
+    <div class="block block-views block-features-blocks-interior-1 block-views-features-blocks-interior-1 odd block-without-title" id="block-views-features-blocks-interior-1">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-features-blocks view-id-features_blocks view-display-id-interior_1 view-dom-id-a04efefcc18a47af08fc5be1f11625a8">
+        
+  
+  
+      <div class="view-content">
+      <table class="views-view-grid cols-1" class="views-view-grid">
+  
+  <tbody>
+          <tr class="row-1 row-first row-last">
+                  <td class="col-1 col-first 1">
+              
+  <h2 class="views-field views-field-title">        <span class="field-content">goDCgo</span>  </h2>  
+  <div class="views-field views-field-field-image-link-url">        <div class="field-content"><a href="http://www.godcgo.com/" title="goDCgo"><img typeof="foaf:Image" src="https://ddot.dc.gov/sites/default/files/styles/callout_interior_graphic/public/dc/sites/ddot/featured_content/images/godcgo_callout.png?itok=7fLZTBYD" width="200" height="150" alt="goDCgo logo" /></a></div>  </div>  
+  <div class="views-field views-field-body">        <div class="field-content"><p>Your #1 resource for transportation information and&nbsp;options to make getting to, and around&nbsp;the District easier than ever.</p>
+</div>  </div>  
+  <div class="views-field views-field-field-related">        <div class="field-content"></div>  </div>  
+  <div class="views-field views-field-field-external-link-url">        <div class="field-content"></div>  </div>          </td>
+              </tr>
+      </tbody>
+</table>
+    </div>
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div><div class="block block-views block-features-blocks-interior-2 block-views-features-blocks-interior-2 even block-without-title" id="block-views-features-blocks-interior-2">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-features-blocks view-id-features_blocks view-display-id-interior_2 view-dom-id-f6837726de5b11d6ad971ef52a0e074c">
+        
+  
+  
+      <div class="view-content">
+      <table class="views-view-grid cols-1" class="views-view-grid">
+  
+  <tbody>
+          <tr class="row-1 row-first row-last">
+                  <td class="col-1 col-first 1">
+              
+  <h2 class="views-field views-field-title">        <span class="field-content">DC Streetcar</span>  </h2>  
+  <div class="views-field views-field-field-image-link-url">        <div class="field-content"><a href="/page/dc-streetcar" title="DC Streetcar"><img typeof="foaf:Image" src="https://ddot.dc.gov/sites/default/files/styles/callout_interior_graphic/public/dc/sites/ddot/featured_content/images/dc-streetcar-callout.PNG?itok=0S-6X58J" width="200" height="150" alt="dcstreetcar logo" title="DC Streetcar" /></a></div>  </div>  
+  <div class="views-field views-field-body">        <div class="field-content"><p>DC Streetcar will facilitate travel for District residents, workers and visitors by complementing existing transit options, and by creating neighborhood connections where they currently do not exist.</p>
+</div>  </div>  
+  <div class="views-field views-field-field-related">        <div class="field-content"></div>  </div>  
+  <div class="views-field views-field-field-external-link-url">        <div class="field-content"></div>  </div>          </td>
+              </tr>
+      </tbody>
+</table>
+    </div>
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div><div class="block block-views block-features-blocks-interior-3 block-views-features-blocks-interior-3 odd block-without-title" id="block-views-features-blocks-interior-3">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-features-blocks view-id-features_blocks view-display-id-interior_3 view-dom-id-5a88f840e6110beb1ab1ff8aa8fc7f0a">
+        
+  
+  
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div><div class="block block-views block-features-blocks-interior-4 block-views-features-blocks-interior-4 even block-without-title" id="block-views-features-blocks-interior-4">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="view view-features-blocks view-id-features_blocks view-display-id-interior_4 view-dom-id-2460a8c27571b6fbba62af9483c6cac2">
+        
+  
+  
+      <div class="view-content">
+      <table class="views-view-grid cols-1" class="views-view-grid">
+  
+  <tbody>
+          <tr class="row-1 row-first row-last">
+                  <td class="col-1 col-first 1">
+              
+  <h2 class="views-field views-field-title">        <span class="field-content">DC Transportation Online Permitting System</span>  </h2>  
+  <div class="views-field views-field-field-image-link-url">        <div class="field-content"><a href="/page/permit-applications" title="DC Transportation Online Permitting System"><img typeof="foaf:Image" src="https://ddot.dc.gov/sites/default/files/styles/callout_interior_graphic/public/dc/sites/ddot/featured_content/images/TIES%20Logos_webpage_275x206.png?itok=U0Jkg8uh" width="200" height="150" alt="DC Transportation Online Permitting System (d.TOPS)" title="DC Transportation Online Permitting System (d.TOPS)" /></a></div>  </div>  
+  <div class="views-field views-field-body">        <div class="field-content"><p>This online system enables home owners, tenants, and businesses alike to apply for the specific type of public space occupancy, construction, excavation, annual or rental permit required for use of the public space within the District of Columbia.</p>
+</div>  </div>  
+  <div class="views-field views-field-field-related">        <div class="field-content"></div>  </div>  
+  <div class="views-field views-field-field-external-link-url">        <div class="field-content"></div>  </div>          </td>
+              </tr>
+      </tbody>
+</table>
+    </div>
+  
+  
+  
+  
+  
+  
+</div>    </div>
+  </div>
+</div>  </div>
+</aside>
+  </div>
+</div><div id="zone-postscript-wrapper" class="zone-wrapper zone-postscript-wrapper clearfix">  
+  <div id="zone-postscript" class="zone zone-postscript clearfix container-12">
+    <div class="grid-3 region region-postscript-first" id="region-postscript-first">
+  <div class="region-inner region-postscript-first-inner">
+    <div class="block block-block block-92 block-block-92 odd block-without-title" id="block-block-92">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <style type="text/css">p.more-link::after {
+  content: url("/sites/all/themes/dc_home_omega/images/more-arrow.png");
+  display: block;
+  float: right;
+  margin-left: 7px;
+  margin-top: 4px;
+}
+p.more-link a {
+  font-size: 18px;
+  font-family: Roboto-Regular;
+}
+</style>
+<div id="resource-icon-section">
+<div class="resource-content-block twitter-resource-icon" title="Twitter">
+<div class="resource-icon-text"><a alt="Twitter" href="/twitter" title="Twitter">Twitter</a></div>
+</div>
+
+<div class="resource-content-block facebook-resource-icon" title="Facebook">
+<div class="resource-icon-text"><a alt="Facebook" href="/facebook" title="Facebook">Facebook</a></div>
+</div>
+
+<div class="resource-content-block mobile-resource-icon" title="Mobile">
+<div class="resource-icon-text"><a alt="Mobile" href="https://dc.gov/page/mobile-apps" title="Mobile">Mobile</a></div>
+</div>
+
+<div class="resource-content-block maps-resource-icon" title="Maps">
+<div class="resource-icon-text"><a alt="Maps" href="https://octo.dc.gov/page/online-maps-listing" title="Maps">Maps</a></div>
+</div>
+
+<div class="resource-content-block webcasts-resource-icon" title="Webcasts">
+<div class="resource-icon-text"><a alt="Webcasts" href="/webcasts" title="Webcasts">Webcasts</a></div>
+</div>
+
+<div class="resource-content-block rss-resource-icon" title="RSS">
+<div class="resource-icon-text"><a alt="RSS" href="/rss" title="RSS">RSS</a></div>
+</div>
+
+<div class="resource-content-block data-resource-icon" title="Data">
+<div class="resource-icon-text"><a alt="Data" href="http://opendata.dc.gov" title="Data">Data</a></div>
+</div>
+
+<div class="resource-content-block subscribe-resource-icon" title="Subscribe">
+<div class="resource-icon-text"><a alt="Subscribe" href="/subscribe" title="Subscribe">Subscribe</a></div>
+</div>
+</div>
+
+<p class="more-link"><a class="more-links" href="/district-resources">More Resources</a></p>
+    </div>
+  </div>
+</div>  </div>
+</div>  </div>
+</div></section>    
+  
+      <footer id="section-footer" class="section section-footer">
+    
+  <div id="zone-prefooter" class="zone zone-prefooter clearfix container-12">
+    <div class="grid-24 region region-prefooter-first" id="region-prefooter-first">
+  <div class="region-inner region-prefooter-first-inner">
+      </div>
+</div>  </div>
+<div id="zone-footer-wrapper" class="zone-wrapper zone-footer-wrapper clearfix">  
+  <div id="zone-footer" class="zone zone-footer clearfix container-12">
+    <div class="grid-12 region region-footer-first" id="region-footer-first">
+  <div class="region-inner region-footer-first-inner">
+    <div class="block block-block block-112 block-block-112 odd block-without-title" id="block-block-112">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="dcFooter">
+<div class="dcBar">
+<div class="dcFooterListLower" id="resources-link">
+<ul>
+<li class="dcFirstChild"><a title="Resources" href="/district-resources">Resources</a></li>
+</ul>
+</div>
+<span class="dcFooterList">
+<div class="footer-icon"><img title="District News" alt="District News" src="/sites/default/files/dc/shared_assets/map_icon_footer.png"></div>
+<div class="dcFooterLabel">District News</div>
+<ul id="list">
+<li><a title="Mayors Public Schedule" href="https://mayor.dc.gov/newsroom">Mayor's Public Schedule</a></li>
+<li><a title="Citywide News" href="https://newsroom.dc.gov">Citywide News</a></li>
+<li><a title="Citywide Calendar" href="https://calendar.dc.gov/events">Citywide Calendar</a></li>
+<li><a target="_blank" class="ext" title="Subscribe to Emails" href="https://service.govdelivery.com/service/user.html?code=DCWASH">Subscribe to Receive Emails</a></li>
+<li><a title="Subscribe to Text Alerts" href="https://textalert.ema.dc.gov/index.php?CCheck=1">Subscribe to Text Alerts</a></li>
+<li><a target="_blank" class="ext" title="Subscribe to Newsletters" href="https://public.govdelivery.com/accounts/DCWASH/subscriber/new?">Subscribe to Newsletters</a></li>
+</ul>
+</span>
+<span class="dcFooterList">
+<div class="footer-icon"><img title="District Initiatives" alt="District Initiatives" src="/sites/default/files/dc/shared_assets/infoCenter_icon_footer.png"></div>
+<div class="dcFooterLabel">District Initiatives</div>
+<ul id="list2">
+
+<li><a title="Green DC" href="https://green.dc.gov">Green DC</a></li>
+<li><a title="Age-Friendly DC" href="https://agefriendly.dc.gov">Age-Friendly DC</a></li>
+<li><a title="Sustainable DC" href="https://sustainable.dc.gov">Sustainable DC</a></li>
+<li><a title="Connect DC" href="https://connect.dc.gov">Connect DC</a></li>
+<li><a title="Great Streets" href="https://greatstreets.dc.gov">Great Streets</a></li>
+<li><a title="Ready DC" href="https://ready.dc.gov/">Ready DC</a></li>
+</ul>
+</span>
+<span class="dcFooterList">
+<div class="footer-icon"><img title="About DC" alt="About DC" src="/sites/default/files/dc/shared_assets/community_icon_footer.png"></div>
+<div class="dcFooterLabel">About DC</div>
+<ul id="list3">
+<li><a title="Open DC" href="https://ogag.dc.gov/">Open DC</a></li>
+<li><a title="Budget" href="https://cfo.dc.gov/budget">Budget</a></li>
+<li><a title="Emancipation" href="https://emancipation.dc.gov">Emancipation</a></li>
+<li><a title="Consumer Protection" href="https://oag.dc.gov/consumer-protection">Consumer Protection</a></li>
+<li><a title="Contracts" href="https://dc.gov/contracts">Contracts</a></li>
+<li><a title="Property Quest" href="https://propertyquest.dc.gov">Property Quest</a></li>
+</ul>
+</span>
+<span class="dcFooterList">
+<div class="footer-icon"><img title="Contact Us" alt="Contact Us" src="/sites/default/files/dc/shared_assets/contact_footer_icon.png"></div>
+<div class="dcFooterLabel">Contact Us</div>
+<ul id="list5">
+<li><a title="Agency Directory" href="https://dc.gov/directory">Agency Directory</a></li>
+<li><a title="Call 311" href="https://311.dc.gov/">Call 311</a></li>
+<li><a title="Contact the Mayor" href="https://dcforms.dc.gov/webform/executive-office-mayor-ask-mayor">Contact the Mayor</a></li>
+<li><a title="Contact Agency Directors" href="/page/contact-agency-directors">Contact Agency Directors</a></li>
+<li><a title="Make FOIA Requests" href="https://dc.gov/page/freedom-information-act-foia">FOIA Requests</a></li>
+<li><a title="Report Website Problems" href="https://dc.gov/page/dcgovernmentwebsite">Report Website Problems</a></li>
+<!--li><a title="Send Feedback" href="https://feedback.dc.gov">Send Feedback</a></li-->
+<li><a title="Service Request Center" href="https://311.dc.gov/">Service Request Center</a></li>
+</ul>
+</span>
+</div>
+</div>    </div>
+  </div>
+</div>  </div>
+</div>  </div>
+</div><div id="zone-second-footer-wrapper" class="zone-wrapper zone-second-footer-wrapper clearfix">  
+  <div id="zone-second-footer" class="zone zone-second-footer clearfix container-24">
+    <div class="grid-24 region region-second-footer" id="region-second-footer">
+  <div class="region-inner region-second-footer-inner">
+    <div class="block block-block block-122 block-block-122 odd block-without-title" id="block-block-122">
+  <div class="block-inner clearfix">
+                
+    <div class="content clearfix">
+      <div class="dcFooter" style="min-height:130px;">
+<div class="dcBar">&nbsp;
+<div class="dcFooterListLower">
+<ul>
+	<li class="dcFirstChild"><a href="https://dc.gov/page/dcgov-accessibility-policy" title="Accessibility">Accessibility</a></li>
+	<li><a href="https://dc.gov/page/privacy-and-security" title="Privacy and Security">Privacy and Security</a></li>
+	<li><a href="https://dc.gov/page/terms-and-conditions-use" title="Terms and Conditions">Terms and Conditions</a></li>
+	<li><a href="https://dc.gov/page/about-district-government-website" title="About DC.Gov">About DC.Gov</a></li>
+	<li class="last">&nbsp;</li>
+</ul>
+</div>
+</div>
+
+<div style="width: 310px;margin-left:auto;margin-right:auto;">
+<div style="background-color: #fff;padding: 1px;width: 120px;float:left;margin: 0 10px 5px 0;"><a href="https://www.govtech.com/cdg/government-experience/Best-of-the-Web--Digital-Government-Achievement-Awards-2014---Winners-Announced.html" target="_blank" title="Best of the Web 2014"><img alt="Best of the Web logo 2014" src="/sites/default/files/dc/shared_assets/BOW14_Winner.png" style="width:110px;padding:3px;"></a></div>
+
+<div style="background-color: #fff;padding: 3px;width: 120px;float:left;"><a href="https://www.govtech.com/cdg/government-experience/Best-of-the-Web--Digital-Government-Achievement-Awards-2013.html" target="_blank" title=""><img alt="Best of the Web logo 2013" src="/sites/default/files/dc/shared_assets/BOW13_final.jpg" style="width:110px;"></a>
+</div>
+<!-- include IF Vox before closing HEAD tag --><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">(function(){setTimeout(function(){var d=document,t='script',f=d.getElementsByTagName(t)[0],s=d.createElement(t);s.type='text/java'+t;s.async=true;s.src='//d2rnkf2kqy5m6h.cloudfront.net/vxc/uwxO-8vMSgaKorrjBbcQ1A/surveys.js?'+(new Date)/1;f.parentNode.insertBefore(s,f);},1);})();</script></div>
+</div>    </div>
+  </div>
+</div>  </div>
+</div>  </div>
+</div></footer>  </div>  <div class="region region-page-bottom" id="region-page-bottom">
+  <div class="region-inner region-page-bottom-inner">
+      </div>
+</div><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam-cell.nr-data.net","licenseKey":"348872d504","applicationID":"496267014","transactionName":"YVYAZxQEC0EHBhVYWVgcI1ASDApcSQsOVVNpQwNUAzoTWwMS","queueTime":0,"applicationTime":421,"atts":"TREDEVweGE8=","errorBeacon":"bam-cell.nr-data.net","agent":""}</script></body>
+</html>
