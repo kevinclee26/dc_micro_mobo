@@ -9,7 +9,7 @@ var othersRemCountList=[];
 var timeFrame=20;
 var tableRecords=20;
 compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}});
-var timeInterval=90000;
+var timeInterval=300000;
 var prevFeatures=[];
 var updatedFeatures=[];
 var censusFeatures=[];
