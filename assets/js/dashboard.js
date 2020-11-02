@@ -9,7 +9,7 @@ var othersRemCountList=[];
 var timeFrame=20;
 var tableRecords=20;
 compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}});
-var timeInterval=300000;
+var timeInterval=60000;
 var prevFeatures=[];
 var updatedFeatures=[];
 var censusFeatures=[];
@@ -493,7 +493,7 @@ function plotBars(loc, chartTitle, povCountList, othersCountList){
 			text: chartTitle
 		},
 		xaxis: {
-			dtick: 90*1000/timeInterval
+			dtick: 300*1000/timeInterval
 		},
 		barmode: 'stack', 
 		showlegend: false
