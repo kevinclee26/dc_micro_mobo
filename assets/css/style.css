@@ -16,7 +16,16 @@ p {
 	font-size: 10px;
 }
 
-/*th, 
+th, 
 td { 
-	padding: 15px;
-}*/
+	/*padding: 15px;*/
+	font-size: 10px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+table {
+	width: 100%;
+}

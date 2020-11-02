@@ -1,26 +1,41 @@
 var timeStart=Date.now()
-var timeCount=1;
+var timeCount=0;
 var timeList=[];
 var record={};
 var povCountList=[]
 var othersCountList=[];
 var povRemCountList=[]
 var othersRemCountList=[];
-var timeFrame=15;
-var tableRecords=15;
+var timeFrame=20;
+var tableRecords=20;
 compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[]});
-var timeInterval=10000;
+var timeInterval=30000;
 var prevFeatures=[];
 var updatedFeatures=[];
 var censusFeatures=[];
 var combinedCensusRecord={};
 var vcFeatures=[];
+var metroFeatures=[];
 var bikeLayer;
 var map; 
+var topCensusLayer;
+var metroLayer;
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
+var vcLayer;
+var voteIcon=L.icon({
+	iconUrl: 'assets/images/vote.png',
+	iconSize: [15, 15], // size of the icon
+});
+var metroIcon=L.icon({
+	iconUrl: 'assets/images/subway.png',
+	iconSize: [15, 15], // size of the icon
+});
 var tempQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/152/query?where=1%3D1&outFields=AIRTEMP,RELATIVEHUMIDITY,VISIBILITY,WINDSPEED&outSR=4326&f=json';
 // var censusQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Demographic_WebMercator/MapServer/36/query?where=1%3D1&outFields=TRACTID,POP10,HOUSING10&outSR=4326&f=json';
 var censusQueryUrl='/assets/data/census.json'
 var vcQueryUrl='/assets/data/voting.json' //vc is voting center
+var metroLinesQueryUrl='/assets/data/metro_lines.geojson'
+var metroQueryUrl='/assets/data/stations.json'
 
 function masterClock(){
 	timeList=resetWindow(timeList);
@@ -31,13 +46,71 @@ async function getCensus(){
 	var response=await fetch(censusQueryUrl);
 	var censusData=await response.json();
 	censusFeatures=censusData['features'];
+	censusFeatures.forEach(feature=>{
+		L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
+			color: "black",
+			fillColor: "yellow",
+			fillOpacity: 0.05, 
+			weight: .5
+		}).addTo(map);
+	});
 	console.log('Census Updated');
-}
+};
 
-async function getVoting(){
+async function getMetro(){
+	var metroResponse=await fetch(metroQueryUrl);
+	var metroData=await metroResponse.json();
+	metroFeatures=metroData['features'];
+	var metroLinesResponse=await fetch(metroLinesQueryUrl);
+	var metroLinesData=await metroLinesResponse.json();
+	var stationLayer = L.geoJSON(metroLinesData, {
+		// onEachFeature: onEachFeature
+		style: feature=> ({
+			color: feature['properties']['NAME'], 
+			weight: 10, 
+			opacity: 0.4,
+		})
+	}).addTo(map);
+	var metroMarkers=[];
+	metroData['features'].forEach(feature=>{
+		// L.circle([feature['geometry']['y'], feature['geometry']['x']], {
+		// 	radius: 800, 
+		// 	stroke: true, 
+		// 	fillOpacity: 0.0,
+		// 	fill: true, 
+		// 	dashArray: 4,
+		// 	opacity: 0.2
+		// }).addTo(map);
+		metroMarkers.push(L.marker([feature['geometry']['y'], feature['geometry']['x']], {
+			opacity: 1, 
+			icon: metroIcon
+		}));
+	});
+	metroLayer=L.layerGroup(metroMarkers);
+	metroLayer.addTo(map);
+	console.log('Metro Updated');
+};
+
+async function getVC(){
 	var response=await fetch(vcQueryUrl);
 	var vcData=await response.json();
 	vcFeatures=vcData['features'];
+	var vcMarkers=[];
+	vcFeatures.forEach(feature=>{
+		// L.circle([feature['geometry']['y'], feature['geometry']['x']], {
+		// 	radius: 800, 
+		// 	stroke: true, 
+		// 	fillOpacity: 0.01,
+		// 	dashArray: 4,
+		// 	opacity: 0.1
+		// }).addTo(map);
+		L.marker([feature['geometry']['y'], feature['geometry']['x']], {
+			opacity: 1, 
+			icon: voteIcon
+		}).addTo(map);
+	});
+	vcLayer=L.layerGroup(vcMarkers);
+	vcLayer.addTo(map);
 	console.log('Voting Centers Updated');
 }
 
@@ -45,23 +118,19 @@ async function buildTempTable(){ //can only use await keyword in the context of 
 	var response=await fetch(tempQueryUrl); //await the result of fetch since it is an asynchronous function
 	var tempData=await response.json(); //await the response
 	var tempPanel=document.getElementById('temp');
-	var textNode='<h6 style="margin-top: 0px;">Current Weather: </h6>';
+	var textNode='<h5 style="font-weight: bold; margin-top: 0px;">Current Weather: </h5>';
 	Object.entries(tempData['features'][0]['attributes']).forEach(([key, value])=>{
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
 		textNode+=`<p>${key.toUpperCase()}: ${value}</p>`;
 	});
 	tempPanel.innerHTML=textNode;
-	// var tempF=tempData['features'][0]['attributes']['AIRTEMP'];
-	// tempList=resetWindow(tempList);
-	// tempList.push(tempF.substring(0, tempF.length-1)); //add to list for chart
-	// chartLine(tempList, 'tempLine', 'Temp');
 };
 
-function countCensus(features){
+function countCensus(features, census){
 	var newCensusRecord={};
 	if (features.length>0){
 		features.forEach(feature=>{
-			var featureTracts=censusFeatures.filter(tract=>inside([feature['lat'], feature['lon']], L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			var featureTracts=census.filter(tract=>inside([feature['lat'], feature['lon']], L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
 			featureTracts.forEach(tract=>{
 			var tractId=tract['attributes']['TRACTID']
 				if (newCensusRecord[tractId]){
@@ -69,20 +138,16 @@ function countCensus(features){
 				} else {
 					newCensusRecord[tractId]=1
 				};
-				// console.log(`bike rented at: ${tractId}`);
 			});
 		});
 	};
-	// console.log(remRecord);
 	return newCensusRecord;
 };
 
 function tallyCensus(pov){
-	// var combinedCensusRecord=censusRecord;
 	var allRecords=Object.entries(record).map(comp=>comp[1]['remCensus']);
 	allRecords.forEach(record=>{
 		Object.entries(record).forEach(tract=>{
-			// console.log(tract);
 			if (combinedCensusRecord[tract[0]]){
 				combinedCensusRecord[tract[0]]=combinedCensusRecord[tract[0]]+tract[1]
 			} else {
@@ -90,52 +155,77 @@ function tallyCensus(pov){
 			};
 		});
 	});
-	buildRankTable(combinedCensusRecord, 'spin');
+	var sortedRecord = Object.entries(combinedCensusRecord)
+	    .sort(([,a],[,b])=>b-a)
+	    .slice(0, tableRecords);
+    var topTracts=sortedRecord.map(tract=>tract[0]);
+    // var topCensusFeatures=censusFeatures.filter(feature=>topTracts.includes(feature['attributes']['TRACTID'])); 
+    var topCensusFeatures=censusFeatures.filter(feature=>topTracts.indexOf(feature['attributes']['TRACTID'])!==-1); 
+    var povAvailability=countCensus(record[pov]['features'], topCensusFeatures);
+    var othersAvailability=countCensus([].concat(...Object.entries(record).filter(comp=>comp[0]!=pov).map(comp=>comp[1]['features'])), topCensusFeatures);
+    sortedRecord.forEach(tract=>{
+    	tract.push(povAvailability[tract[0]])
+    	tract.push(othersAvailability[tract[0]])
+	});
+    var topCensusMarkers=[]
+	if (topCensusLayer){
+		map.removeLayer(topCensusLayer);
+		// console.log('Removed Top Census Layer');
+	};
+	topCensusFeatures.forEach(feature=>{
+		topCensusMarkers.push(L.polygon(L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]), {
+			color: "black",
+			fillColor: "orange",
+			fillOpacity: 0.25, 
+			weight: 1
+		}).bindPopup(`<h6>TRACT ID: ${feature['attributes']['TRACTID']}</h6><h6>Main Availability: ${povAvailability[feature['attributes']['TRACTID']]}</h6><h6>Others Availability: ${othersAvailability[feature['attributes']['TRACTID']]}</h6>`));
+	});
+	topCensusLayer=L.layerGroup(topCensusMarkers);
+	topCensusLayer.addTo(map);
+	// console.log('Added Top Census Layer');
+	buildRankTable(sortedRecord, pov);
 };
 
 function buildRankTable(censusRecord, compName){
-	var sortedRecord = Object.entries(censusRecord)
-	    .sort(([,a],[,b])=>b-a)
-	    .slice(0, tableRecords);
 	var recordPanel=document.getElementById('record');
-	var textNode='<h6 style="margin-top: 0px;">Current Record: </h6>';
-	textNode+=`<table><thead><th style="width: 50%">Tract ID</th><th style="width: 35%">Count</th><th style="width: 15%">${compName}</th></thead><tbody>`;
-	sortedRecord.forEach(([key, value])=>{
+	var textNode='<h5 style="font-weight: bold; margin-top: 0px;">Usage Record by Tract ID: (Main/Total)</h5>';
+	// textNode+=`<table><thead><th style="width: 25%">Tract ID</th><th style="width: 15%">Tot. Cnt. </th><th style="width: 15%">${compName} Cnt. </th><th style="width: 25%">Avail. Scooters</th></thead><tbody>`;
+	textNode+=`<table><thead><th>Tract ID</th><th>Cnt.</th><th>Avail. Scooters</th></thead><tbody>`;
+	censusRecord.forEach(([tract, totalCount, compAvail, othersAvail])=>{
+		compAvail=compAvail||0;
+		othersAvail=othersAvail||0;
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
-		textNode+=`<tr><td>${key}</td><td>${value}</td><td>${record['spin']['allCensus'][key]? record['spin']['allCensus'][key]: 0}</tr>`;
+		textNode+=`<tr><td>${tract}</td><td>${record[compName]['allCensus'][tract]? record[compName]['allCensus'][tract]: 0}/${totalCount}</td><td>${compAvail}/${compAvail+othersAvail}</td></tr>`;
 	});
 	textNode+='</tbody></table>';
 	recordPanel.innerHTML=textNode;
 };
 
-async function testUpdate(){
-	var proxyurl='';
+async function bikeUpdate(){
+	
 	for (i=0; i<compInfo.length; i++){
-		var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
+		// var proxyurl='';
+		if (compInfo[i]['proxy']){
+			// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
+			var response=await fetch(proxyurl+compInfo[i]['url']);
+		} else {
+			var response=await fetch(compInfo[i]['url']);
+		};
 		var data=await response.json();
 		var features=data;
 		compInfo[i]['layers'].forEach(key=>{
 			features=features[key];
 		});
 		var compName=compInfo[i]['name']
-		// var updatedFeatures=features;
-		// var [newFeatures, remFeatures]=calcDifference(updatedFeatures, prevFeatures);
 		var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
-		// record[compName]={};
 		record[compName]['features']=features;
 		record[compName]['count']=features.length;
-		// record[compName]['features']=updatedFeatures;
 		record[compName]['remFeatures']=remFeatures;
 		record[compName]['remCount']=remFeatures.length;
-		record[compName]['remCensus']=countCensus(remFeatures);
+		record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
 		record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
-		// record[compInfo[i]['name']]['prevFeatures']=updatedFeatures
-		// console.log(record);
 	};
-	// prevFeatures=updatedFeatures;
-	// console.log(record);
 	console.log('Bikes Updated');
-	// return record;
 };
 
 function distance(lat1,lon1,lat2,lon2){
@@ -154,9 +244,6 @@ function makeBikesFilter(circleCenterLatitude, circleCenterLongitude, circleRadi
 
 function updateBikeMap(pov){
 	var bikes=record[pov]['features'];
-	// var i = 0;
-	// map.eachLayer(function(){ i += 1; });
-	// console.log('Map has', i, 'layers.');
 	if (bikeLayer){
 		map.removeLayer(bikeLayer);
 	};
@@ -166,59 +253,81 @@ function updateBikeMap(pov){
 	});
 	var bikeMarkers=[];
 	for (var i=0; i<bikes.length; i++) {
-	  	bikeMarkers.push(L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}).bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
+	  	bikeMarkers.push(L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
 	};
 	bikeLayer=L.layerGroup(bikeMarkers);
 	bikeLayer.addTo(map);
-	// var i = 0;
-	// map.eachLayer(function(){ i += 1; });
-	// console.log('Map has', i, 'layers.');
 };
 
 function vcHist(pov){
 	var povVCList=[];
 	var othersVCList=[];
-	// var povFeatures=record[pov]['features']
-	// var othersFeatures=record
+	var vcMarkers=[];
+	if (vcLayer){
+		map.removeLayer(vcLayer);
+	};
 	for (var i=0; i<vcFeatures.length; i++) {
   		var myFilter=makeBikesFilter(vcFeatures[i]['geometry']['y'], vcFeatures[i]['geometry']['x'], 22.25);//circle.radiusInMi);
 		var povBikesWithinCircle=record[pov]['features'].filter(myFilter);
-		var othersBikeWithinCircle=[].concat(...Object.entries(record).filter(comp=>comp[0]!='spin').map(comp=>comp[1]['features'])).filter(myFilter);
-		// if (tweetsWithinCircle>0) {
-			// vcenterUnder+=1;
-		// };
+		var othersBikeWithinCircle=[].concat(...Object.entries(record).filter(comp=>comp[0]!=pov).map(comp=>comp[1]['features'])).filter(myFilter);
 		povVCList.push(povBikesWithinCircle.length);
 		othersVCList.push(othersBikeWithinCircle.length);
+		vcMarkers.push(L.marker([vcFeatures[i]['geometry']['y'], vcFeatures[i]['geometry']['x']], {
+			opacity: 1, 
+			icon: voteIcon
+		}).bindPopup(`<h6>Location: ${vcFeatures[i]['attributes']['LOCATION']}"</h6><h6>Hours: ${vcFeatures[i]['attributes']['HOURS']}</h6><h6>Main Availability: ${povBikesWithinCircle.length}</h6><h6>Others Availability: ${othersBikeWithinCircle.length}</h6>`));
 	};
-	// console.log(othersBikeWithinCircle);
-	// console.log(povVCList);
-	// console.log(othersVCList);
-	plotHists('vcHist', 'VC Distribution', povVCList, othersVCList);
+	vcLayer=L.layerGroup(vcMarkers);
+	vcLayer.addTo(map);
+	plotHists('vcHist', 'VC Coverage', povVCList, othersVCList);
+};
+
+
+function metroHist(pov){
+	var povMetroList=[];
+	var othersMetroList=[];
+	var metroMarkers=[];
+	if (metroLayer){
+		map.removeLayer(metroLayer);
+		// console.log('Removed Metro Layer');
+	};
+	for (var i=0; i<metroFeatures.length; i++) {
+  		var myFilter=makeBikesFilter(metroFeatures[i]['geometry']['y'], metroFeatures[i]['geometry']['x'], 22.25);//circle.radiusInMi);
+		var povBikesWithinCircle=record[pov]['features'].filter(myFilter);
+		var othersBikeWithinCircle=[].concat(...Object.entries(record).filter(comp=>comp[0]!=pov).map(comp=>comp[1]['features'])).filter(myFilter);
+		povMetroList.push(povBikesWithinCircle.length);
+		othersMetroList.push(othersBikeWithinCircle.length);
+		metroMarkers.push(L.marker([metroFeatures[i]['geometry']['y'], metroFeatures[i]['geometry']['x']], {
+			opacity: 1, 
+			icon: metroIcon
+		}).bindPopup(`<h6>ID: ${metroFeatures[i]['attributes']['NAME']}</h6><h6>Line: ${metroFeatures[i]['attributes']['LINE']}</h6><h6>Main Availability: ${povBikesWithinCircle.length}</h6><h6>Others Availability: ${othersBikeWithinCircle.length}</h6>`));
+	};
+	metroLayer=L.layerGroup(metroMarkers);
+	metroLayer.addTo(map);
+	// console.log('Added Metro Layer');
+	plotHists('metroHist', 'Metro Coverage', povMetroList, othersMetroList);
 };
 
 // testUpdate().then(_=>plotRecord());//.then(test=>console.log(test));
 // testUpdate().then(updatedRecord=>console.log(Object.entries(updatedRecord).map(comp=>comp[1]).reduce((a,b)=>a+b, 0)));//.then(test=>console.log(test));
 // testUpdate().then(()=>console.log(Object.entries(record).map(comp=>comp[1]).reduce((a,b)=>a+b, 0)));//.then(test=>console.log(test));
 var map=initMap();
+updateCounter();
 buildTempTable();
 getCensus();
-getVoting(); //.then(_=>console.log('Census Updated'))
+getMetro();
+getVC(); //.then(_=>console.log('Census Updated'))
 //.then(_=>{
-testUpdate().then(()=>{
-	// console.log(record);
-	// console.log(Object.entries(record).map(comp=>comp[1]['count']).reduce((a,b)=>a+b, 0));
+bikeUpdate().then(()=>{
 	// timeCountList.push(timeCount);
 	// timeCountList=resetWindow(timeCountList);
 	masterClock();
 	updateBikeMap('spin');
-	// console.log(timeList);
-	// plotRecord();
 	compBar('spin');
-	// buildRankTable('spin');
 	tallyCensus('spin');
+	metroHist('spin');
 	vcHist('spin');
-	});//.then(test=>console.log(test));
-// });
+});//.then(test=>console.log(test));
 
 function combineObj(a, b){
 	if (a){
@@ -240,8 +349,6 @@ function compBar(pov){
 	var povRemCount=record[pov]['remCount']
 	var othersCount=Object.entries(record).map(comp=>comp[1]['count']).reduce((a,b)=>a+b, 0)-povCount;
 	var othersRemCount=Object.entries(record).map(comp=>comp[1]['remCount']).reduce((a,b)=>a+b, 0)-povRemCount;
-	console.log(Object.entries(record).map(comp=>comp[1]['remCount']));
-	console.log(othersRemCount);
 	// compRecord['others']=Object.entries(record).filter(comp=>comp[0]!='spin').map(comp=>comp[1]).reduce((a,b)=>a+b, 0)
 	povCountList=resetWindow(povCountList);
 	othersCountList=resetWindow(othersCountList);
@@ -252,7 +359,7 @@ function compBar(pov){
 	povRemCountList.push(povRemCount);
 	othersRemCountList.push(othersRemCount);
 	plotBars('totalBar', 'Total Available', povCountList, othersCountList);
-	plotBars('rentBar', 'Recently Rented', povRemCountList, othersRemCountList);
+	plotBars('rentBar', 'Recently Unavailable (Rented)', povRemCountList, othersRemCountList);
 };
 
 function resetWindow(ary){ 
@@ -268,32 +375,34 @@ function updateCounter(){
 };
 
 function plotHists(loc, chartTitle, povCountList, othersCountList){
+	var countStart=10;
+	// povCountList.filter(count=>count<countStart).length
 	var tracePov={
 		x: povCountList,
 		type: 'histogram', 
-		name: 'spin', 
+		name: `main has ${povCountList.filter(count=>count<countStart).length} with < 10 VPM`, 
 		opacity: 0.5, 
 		xbins: {
 			// end: 100, 
 			size: 10, 
-			start: 0
+			start: countStart
 		}, 
 		marker: {
-			color: 'orange'	
+			color: 'orange'
 		}
 	};
 	var traceOthers={
 		x: othersCountList,
 		type: 'histogram', 
-		name: 'others', 
+		name: `others have ${othersCountList.filter(count=>count<countStart).length} with < 10 VPM`, 
 		opacity: 0.5, 
 		xbins: {
 			// end: 100, 
 			size: 10, 
-			start: 0
+			start: countStart
 		}, 
 		marker: {
-			color: 'blue'	
+			color: 'blue'
 		}
 	};
 	var layout={
@@ -312,10 +421,11 @@ function plotHists(loc, chartTitle, povCountList, othersCountList){
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: chartTitle
+			text: `${chartTitle} out of ${othersCountList.length+povCountList.length} Sites`
 		},
-		barmode: 'overlay', 
-		showlegend: false
+		barmode: 'overlay',
+		hovermode: false
+		// showlegend: false
 	};
 	Plotly.newPlot(loc, [tracePov, traceOthers], layout);
 };
@@ -325,7 +435,8 @@ function plotBars(loc, chartTitle, povCountList, othersCountList){
 		x: timeList,
 		y: povCountList, 
 		type: 'bar', 
-		name: 'spin', 
+		name: 'main', 
+		opacity: 0.5, 
 		marker: {
 			color: 'orange'	
 		}
@@ -335,6 +446,7 @@ function plotBars(loc, chartTitle, povCountList, othersCountList){
 		y: othersCountList,
 		type: 'bar', 
 		name: 'others', 
+		opacity: 0.5, 
 		marker: {
 			color: 'blue'	
 		}
@@ -357,8 +469,12 @@ function plotBars(loc, chartTitle, povCountList, othersCountList){
 			}, 
 			text: chartTitle
 		},
+		xaxis: {
+			dtick: 90*1000/timeInterval
+		},
 		barmode: 'stack', 
 		showlegend: false
+		// hovermode: false
 	};
 	Plotly.newPlot(loc, [tracePov, traceOthers], layout);
 };
@@ -383,11 +499,10 @@ function inside(point, vs) {
 };
 
 function initMap(){
-	// buildTempTable();
 	var masterPanel=document.getElementById('start');
-	masterPanel.innerHTML=`<h6 style="margin-top: 0px">Started: ${formatTime(timeStart)}</h6>`
+	masterPanel.innerHTML=`<h5 style="font-weight: bold; margin-top: 0px">Started: ${formatTime(timeStart)}</h5>`
 	var cyclePanel=document.getElementById('cycle');
-	cyclePanel.innerHTML=`<p>updates every ${timeInterval/1000} seconds</p>`;
+	cyclePanel.innerHTML=`<p>has elapsed<br>updates every ${timeInterval/1000} seconds</p>`;
 	var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
 		attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
 		tileSize: 512,
@@ -433,18 +548,17 @@ setInterval(()=>{
 	timeCount+=1;
 	// timeCountList.push(timeCount);
 	// timeCountList=resetWindow(timeCountList);
-	testUpdate()
+	bikeUpdate()
 		.then(()=>{
-			// console.log(record);
-			// console.log(Object.entries(record).map(comp=>comp[1]['count']).reduce((a,b)=>a+b, 0));
 			masterClock();
 			updateBikeMap('spin');
-			// console.log(timeList);
-			// plotRecord();
 			compBar('spin', 'count');
 			tallyCensus('spin');
+			metroHist('spin');
 			vcHist('spin');
-			// buildRankTable('spin');
+			var i=0;
+			map.eachLayer(function(){ i += 1; });
+			console.log('Map has', i, 'layers.');
 		}).catch(error=>console.log(error)); //an async functino by definition returns a promise
 }, timeInterval);
 
@@ -467,26 +581,3 @@ function formatTime(unixNum){
 	var seconds='0'+date.getSeconds();
 	return hours+':'+minutes.substr(-2)+':'+seconds.substr(-2);
 };
-
-// plotRecord();
-// plot();
-
-// updateCounts();
-// console.log(record);
-// .then(console.log(record));
-// getData('skip');
-
-
-
-// getData('lyft');
-
-// setInterval(()=>{
-// 	masterClock();
-// 	counter+=1
-// 	updateCounter();
-// 	// buildTempTable().then(response=>console.log('Temperature Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
-// 	buildBikeTable().then(response=>console.log('Bikes Refreshed')).catch(error=>console.log(error)); //an async functino by definition returns a promise
-// 	buildRankTable();
-// 	// var millis=Date.now()-start;
-// 	// console.log(`seconds elapsed=${millis/1000}`);
-// }, timeInterval);
