@@ -8,8 +8,8 @@ var povRemCountList=[]
 var othersRemCountList=[];
 var timeFrame=20;
 var tableRecords=20;
-compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[]});
-var timeInterval=30000;
+compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}});
+var timeInterval=60000;
 var prevFeatures=[];
 var updatedFeatures=[];
 var censusFeatures=[];
@@ -188,23 +188,24 @@ function tallyCensus(pov){
 
 function buildRankTable(censusRecord, compName){
 	var recordPanel=document.getElementById('record');
-	var textNode='<h5 style="font-weight: bold; margin-top: 0px;">Usage Record by Tract ID: (Main/Total)</h5>';
+	var textNode='<h5 style="font-weight: bold; margin-top: 0px; font-size: 10px">Usage Record by Tract ID: (Main/Total)</h5>';
 	// textNode+=`<table><thead><th style="width: 25%">Tract ID</th><th style="width: 15%">Tot. Cnt. </th><th style="width: 15%">${compName} Cnt. </th><th style="width: 25%">Avail. Scooters</th></thead><tbody>`;
-	textNode+=`<table><thead><th>Tract ID</th><th>Cnt.</th><th>Avail. Scooters</th></thead><tbody>`;
+	textNode+=`<table style="width: 100%; border: 1px solid black;"><thead><th style="font-size: 10px">Tract ID</th><th style="font-size: 10px">Cnt.</th><th style="font-size: 10px">Avail. Scooters</th></thead><tbody>`;
 	censusRecord.forEach(([tract, totalCount, compAvail, othersAvail])=>{
 		compAvail=compAvail||0;
 		othersAvail=othersAvail||0;
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
-		textNode+=`<tr><td>${tract}</td><td>${record[compName]['allCensus'][tract]? record[compName]['allCensus'][tract]: 0}/${totalCount}</td><td>${compAvail}/${compAvail+othersAvail}</td></tr>`;
+		textNode+=`<tr><td style="font-size: 10px">${tract}</td><td style="font-size: 10px">${record[compName]['allCensus'][tract]? record[compName]['allCensus'][tract]: 0}/${totalCount}</td><td style="font-size: 10px">${compAvail}/${compAvail+othersAvail}</td></tr>`;
 	});
 	textNode+='</tbody></table>';
 	recordPanel.innerHTML=textNode;
 };
 
 async function bikeUpdate(){
-	
 	for (i=0; i<compInfo.length; i++){
 		// var proxyurl='';
+		console.log(`Attempting ${compInfo[i]['name']}`)
+		// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
 		if (compInfo[i]['proxy']){
 			// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
 			var response=await fetch(proxyurl+compInfo[i]['url']);
@@ -212,21 +213,43 @@ async function bikeUpdate(){
 			var response=await fetch(compInfo[i]['url']);
 		};
 		var data=await response.json();
+		// console.log(compInfo[i]);
 		var features=data;
 		compInfo[i]['layers'].forEach(key=>{
 			features=features[key];
 		});
 		var compName=compInfo[i]['name']
+		// var censusCount=countCensus(features, censusFeatures);
+		// var diff=calcDiff(censusCount, record[compName]['censusCount']);
+		// console.log(diff);
+
 		var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
+		// record[compName]['censusCount']=diff;
 		record[compName]['features']=features;
 		record[compName]['count']=features.length;
 		record[compName]['remFeatures']=remFeatures;
 		record[compName]['remCount']=remFeatures.length;
+		// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
 		record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
 		record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 	};
 	console.log('Bikes Updated');
 };
+
+function calcDiff(a, b){ //a is new and b is old
+	var diff={}
+	Object.keys(b).forEach(key=>{
+		var diffCount=b[key]-(a[key]? a[key]: 0);
+		if (diffCount>0){
+			diff[key]=b[key]-(a[key]? a[key]: 0)
+		};
+	});
+	return diff;
+};
+
+// var a={'a': 1, 'b': 1, 'd': 1}
+// var b={'a': 1, 'b': 2, 'c': 3}
+// console.log(calcDiff(a, b))
 
 function distance(lat1,lon1,lat2,lon2){
 	var R=6371; // km
@@ -347,8 +370,8 @@ function combineObj(a, b){
 function compBar(pov){
 	var povCount=record[pov]['count'];
 	var povRemCount=record[pov]['remCount']
-	var othersCount=Object.entries(record).map(comp=>comp[1]['count']).reduce((a,b)=>a+b, 0)-povCount;
-	var othersRemCount=Object.entries(record).map(comp=>comp[1]['remCount']).reduce((a,b)=>a+b, 0)-povRemCount;
+	var othersCount=Object.entries(record).map(comp=>comp[1]['count']).reduce((a, b)=>a+b, 0)-povCount;
+	var othersRemCount=Object.entries(record).map(comp=>comp[1]['remCount']).reduce((a, b)=>a+b, 0)-povRemCount;
 	// compRecord['others']=Object.entries(record).filter(comp=>comp[0]!='spin').map(comp=>comp[1]).reduce((a,b)=>a+b, 0)
 	povCountList=resetWindow(povCountList);
 	othersCountList=resetWindow(othersCountList);
