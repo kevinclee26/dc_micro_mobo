@@ -2,8 +2,10 @@
 const timeFrame=10; //timeFrame is the maximum number of data points
 const timeInterval=30000; //timeInterval is the frequency of updates measured in milliseconds (1000ms=1s)
 var tempQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_WebMercator/MapServer/152/query?where=1%3D1&outFields=AIRTEMP,RELATIVEHUMIDITY,VISIBILITY,WINDSPEED&outSR=4326&f=json';
-var bikesQueryUrl = "https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status";
+var spinQueryUrl = "https://web.spin.pm/api/gbfs/v1/washington_dc/free_bike_status";
 var censusQueryUrl='https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Demographic_WebMercator/MapServer/36/query?where=1%3D1&outFields=TRACTID,POP10,HOUSING10&outSR=4326&f=json';
+var lyftQueryUrl='https://s3.amazonaws.com/lyft-lastmile-production-iad/lbs/dca/free_bike_status.json';
+var razorQueryUrl='https://razorapi.net/api/v1/gbfs/Washington%20DC/free_bike_status.json';
 
 // function buildTempTable(temp_data){
 // 	var temp_panel=document.getElementById('temp');
@@ -50,6 +52,7 @@ function buildRankTable(){
     var recordPanel=document.getElementById('record');
 	var textNode='<h6 style="margin-top: 0px;">Current Record: </h6>';
 	textNode+='<table><thead><th>Tract ID</th><th>Count</th></thead><tbody>';
+	// textNode+='<table><thead><th style="padding: 0 15px">Tract ID</th><th style="padding: 0 15px">Count</th></thead><tbody>';
 	sortedRecord.forEach(([key, value])=>{
 		// temp_panel.append('p').text(`${key.toUpperCase()}: ${value}`); //d3.append is only available to d3
 		textNode+=`<tr><td>${key}</td><td>${value}</td></tr>`;
@@ -75,7 +78,7 @@ async function buildTempTable(){ //can only use await keyword in the context of 
 };
 
 async function buildBikeTable(){ //can only use await keyword in the context of an async (keyword) function
-	var response=await fetch(bikesQueryUrl); //await the result of fetch since it is an asynchronous function
+	var response=await fetch(spinQueryUrl); //await the result of fetch since it is an asynchronous function
 	var bikeData=await response.json(); //await the response
 	bikeFeatures=bikeData['data']['bikes']
 	var bikeCount=bikeFeatures.length;
@@ -172,6 +175,24 @@ function updateRemBikes(bikesRem){
 	bikeRemLayer.addTo(map);
 	updateRemRecord(bikesRem);
 };
+
+function countCensus(features){
+	var remRecord={}
+	if (features.length>0){
+		sample=features[0]:
+		var featureTracts=censusFeatures.filter(feature=>inside([sample['lat'], sample['lon']], L.GeoJSON.coordsToLatLngs(feature['geometry']['rings'][0]))==true);
+		featureTracts.forEach(tract=>{
+		var tractId=tract['attributes']['TRACTID']
+			if (remRecord[tractId]){
+				remRecord[tractId]+=1
+			} else {
+				remRecord[tractId]=1
+			};
+			console.log(`bike rented at: ${tractId}`);
+		});
+	}
+	console.log(remRecord);
+}
 
 function updateRemRecord(bikesRem){
 	if (bikesRem.length>0){
