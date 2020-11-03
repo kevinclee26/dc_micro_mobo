@@ -10,8 +10,6 @@ var timeFrame=20;
 var tableRecords=20;
 compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}});
 var timeInterval=60000;
-var prevFeatures=[];
-var updatedFeatures=[];
 var censusFeatures=[];
 var combinedCensusRecord={};
 var vcFeatures=[];
@@ -130,7 +128,8 @@ function countCensus(features, census){
 	var newCensusRecord={};
 	if (features.length>0){
 		features.forEach(feature=>{
-			var featureTracts=census.filter(tract=>inside([feature['lat'], feature['lon']], L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			// var featureTracts=census.filter(tract=>inside([feature[0], feature[1]], L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			var featureTracts=census.filter(tract=>inside(feature, L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
 			featureTracts.forEach(tract=>{
 			var tractId=tract['attributes']['TRACTID']
 				if (newCensusRecord[tractId]){
@@ -213,7 +212,6 @@ async function bikeUpdate(){
 		// 	var response=await fetch(compInfo[i]['url']);
 		// };
 		var data=await response.json();
-		// console.log(compInfo[i]);
 		var features=data;
 		compInfo[i]['layers'].forEach(key=>{
 			features=features[key];
@@ -223,7 +221,8 @@ async function bikeUpdate(){
 		// var diff=calcDiff(censusCount, record[compName]['censusCount']);
 		// console.log(diff);
 
-		var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
+		// var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
+		var remFeatures=calcDiff(record[compName]['features']).map(feature=>[feature['lat'], feature['lon']]);
 		// record[compName]['censusCount']=diff;
 		record[compName]['features']=features;
 		record[compName]['count']=features.length;
@@ -237,14 +236,16 @@ async function bikeUpdate(){
 };
 
 function calcDiff(a, b){ //a is new and b is old
-	var diff={}
-	Object.keys(b).forEach(key=>{
-		var diffCount=b[key]-(a[key]? a[key]: 0);
-		if (diffCount>0){
-			diff[key]=b[key]-(a[key]? a[key]: 0)
-		};
-	});
-	return diff;
+	// var diff={}
+	// Object.keys(b).forEach(key=>{
+	// 	var diffCount=b[key]-(a[key]? a[key]: 0);
+	// 	if (diffCount>0){
+	// 		diff[key]=b[key]-(a[key]? a[key]: 0)
+	// 	};
+	// });
+	// return diff;
+	b.forEach(element=>delete a[a.indexOf(element)])
+	return a.filter(element=>element!=null);
 };
 
 // var a={'a': 1, 'b': 1, 'd': 1}
