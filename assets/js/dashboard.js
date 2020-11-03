@@ -8,7 +8,7 @@ var povRemCountList=[]
 var othersRemCountList=[];
 var timeFrame=20;
 var tableRecords=20;
-compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}});
+compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}, 'featuresTrunc':[]});
 var timeInterval=60000;
 var prevFeatures=[];
 var updatedFeatures=[];
@@ -126,11 +126,14 @@ async function buildTempTable(){ //can only use await keyword in the context of 
 	tempPanel.innerHTML=textNode;
 };
 
-function countCensus(features, census){
+function countCensus(features, census){ //features need to be in [[lat, lon]]
 	var newCensusRecord={};
 	if (features.length>0){
 		features.forEach(feature=>{
-			var featureTracts=census.filter(tract=>inside([feature['lat'], feature['lon']], L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			// console.log(feature.split(',').map(parseFloat));
+			// var featureTracts=census.filter(tract=>inside(feature.split(',').map(parseFloat), L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true); //this has a bug
+			var featureTracts=census.filter(tract=>inside(feature.split(',').map(parseFloat), L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			// console.log(featureTracts);
 			featureTracts.forEach(tract=>{
 			var tractId=tract['attributes']['TRACTID']
 				if (newCensusRecord[tractId]){
@@ -161,7 +164,9 @@ function tallyCensus(pov){
     var topTracts=sortedRecord.map(tract=>tract[0]);
     // var topCensusFeatures=censusFeatures.filter(feature=>topTracts.includes(feature['attributes']['TRACTID'])); 
     var topCensusFeatures=censusFeatures.filter(feature=>topTracts.indexOf(feature['attributes']['TRACTID'])!==-1); 
+    // var povAvailability=countCensus(record[pov]['features'].map(feature=>feature.split(',').map(parseFloat)), topCensusFeatures);
     var povAvailability=countCensus(record[pov]['features'], topCensusFeatures);
+    // var othersAvailability=countCensus([].concat(...Object.entries(record).filter(comp=>comp[0]!=pov).map(comp=>comp[1]['features'])).map(feature=>feature.split(',').map(parseFloat)), topCensusFeatures);
     var othersAvailability=countCensus([].concat(...Object.entries(record).filter(comp=>comp[0]!=pov).map(comp=>comp[1]['features'])), topCensusFeatures);
     sortedRecord.forEach(tract=>{
     	tract.push(povAvailability[tract[0]])
@@ -202,10 +207,10 @@ function buildRankTable(censusRecord, compName){
 };
 
 async function bikeUpdate(){
-	for (i=0; i<compInfo.length; i++){
+	for (var i=0; i<compInfo.length; i++){
 		// var proxyurl='';
 		var compName=compInfo[i]['name']
-		console.log(`Attempting ${compInfo[i]['name']}`)
+		// console.log(`Attempting ${compInfo[i]['name']}`)
 		try {
 			if (compInfo[i]['proxy']){
 				// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
@@ -219,15 +224,29 @@ async function bikeUpdate(){
 			compInfo[i]['layers'].forEach(key=>{
 				features=features[key];
 			});
-			var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
-			record[compName]['features']=features;
-			record[compName]['count']=features.length;
+			// console.log(features.map(feature=>[feature['lat'], ['lon']]));
+			featuresStr=features.map(feature=>[parseFloat(feature['lat']), parseFloat(feature['lon'])].join(','));
+			featuresStrTrunc=features.map(feature=>[parseFloat(feature['lat']).toFixed(2), parseFloat(feature['lon']).toFixed(2)].join(','));
+			// console.log(featuresStr);
+			// console.log(featuresStr);
+			// console.log(features.map(feature=>[feature['lat'], feature['lon']].join(',')));
+
+			// console.log(record[compName]['features'].map(feature=>[feature['lat'], feature['lon']].join(',')));
+			// var remFeatures=calcDiff(record[compName]['features'].map(feature=>[feature['lat'], feature['lon']].join(',')), features.map(feature=>[feature['lat'], feature['lon']]));
+			var remFeatures=calcDiff(record[compName]['featuresTrunc'], featuresStrTrunc);
+			// console.log(features);
+			// var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
+			// console.log(remFeatures);
+			record[compName]['features']=featuresStr;
+			record[compName]['featuresTrunc']=featuresStrTrunc;
+			record[compName]['count']=featuresStr.length;
 			record[compName]['remFeatures']=remFeatures;
 			record[compName]['remCount']=remFeatures.length;
 			// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
 			record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
 			record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 		} catch (e) {
+			// console.error(e);
 			// console.error(e);
 			console.log(`Failed ${compInfo[i]['name']}`);
 			// var features=[];
@@ -236,7 +255,7 @@ async function bikeUpdate(){
 			record[compName]['remFeatures']=[];
 			record[compName]['remCount']=0;
 			record[compName]['remCensus']={};
-			record[compName]['allCensus']={};
+			record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 		}
 		// record[compName]['censusCount']=diff;
 		// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
@@ -245,14 +264,16 @@ async function bikeUpdate(){
 };
 
 function calcDiff(a, b){ //a is new and b is old
-	var diff={}
-	Object.keys(b).forEach(key=>{
-		var diffCount=b[key]-(a[key]? a[key]: 0);
-		if (diffCount>0){
-			diff[key]=b[key]-(a[key]? a[key]: 0)
-		};
-	});
-	return diff;
+	// var diff={}
+	// Object.keys(b).forEach(key=>{
+	// 	var diffCount=b[key]-(a[key]? a[key]: 0);
+	// 	if (diffCount>0){
+	// 		diff[key]=b[key]-(a[key]? a[key]: 0)
+	// 	};
+	// });
+	// return diff;
+	b.forEach(element=>delete a[a.indexOf(element)])
+	return a.filter(element=>element!=null);
 };
 
 // var a={'a': 1, 'b': 1, 'd': 1}
@@ -267,10 +288,14 @@ function distance(lat1,lon1,lat2,lon2){
 };
 
 function makeBikesFilter(circleCenterLatitude, circleCenterLongitude, circleRadiusInMi){
-   var circleRadiusInKm=circleRadiusInMi*1.6;
-   return function bikesWithinCircle(bike){
-      return distance(circleCenterLatitude, circleCenterLongitude, bike['lat'], bike['lon'])<=circleRadiusInKm;
-   };
+	var circleRadiusInKm=circleRadiusInMi*1.6;
+	return function bikesWithinCircle(bike){
+		// var bike_lat, var bike_lon=bike.split(',').map(parseFloat);
+		var bike_lat, bike_lon
+		[bike_lat, bike_lon]=bike.split(',').map(parseFloat)
+		// return distance(circleCenterLatitude, circleCenterLongitude, bike['lat'], bike['lon'])<=circleRadiusInKm;
+		return distance(circleCenterLatitude, circleCenterLongitude, bike_lat, bike_lon)<=circleRadiusInKm;
+	};
 };
 
 function updateBikeMap(pov){
@@ -284,7 +309,8 @@ function updateBikeMap(pov){
 	});
 	var bikeMarkers=[];
 	for (var i=0; i<bikes.length; i++) {
-	  	bikeMarkers.push(L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
+	  	// bikeMarkers.push(L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
+	  	bikeMarkers.push(L.marker(bikes[i].split(',').map(parseFloat), {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
 	};
 	bikeLayer=L.layerGroup(bikeMarkers);
 	bikeLayer.addTo(map);
