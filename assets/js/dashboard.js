@@ -204,6 +204,7 @@ function buildRankTable(censusRecord, compName){
 async function bikeUpdate(){
 	for (i=0; i<compInfo.length; i++){
 		// var proxyurl='';
+		var compName=compInfo[i]['name']
 		console.log(`Attempting ${compInfo[i]['name']}`)
 		try {
 			if (compInfo[i]['proxy']){
@@ -218,38 +219,27 @@ async function bikeUpdate(){
 			compInfo[i]['layers'].forEach(key=>{
 				features=features[key];
 			});
+			var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
+			record[compName]['features']=features;
+			record[compName]['count']=features.length;
+			record[compName]['remFeatures']=remFeatures;
+			record[compName]['remCount']=remFeatures.length;
+			// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
+			record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
+			record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 		} catch (e) {
 			// console.error(e);
 			console.log(`Failed ${compInfo[i]['name']}`);
-			var features=[];
+			// var features=[];
+			record[compName]['features']=[];
+			record[compName]['count']=0;
+			record[compName]['remFeatures']=[];
+			record[compName]['remCount']=0;
+			record[compName]['remCensus']={};
+			record[compName]['allCensus']={};
 		}
-		// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
-		// if (compInfo[i]['proxy']){
-		// 	// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
-		// 	var response=await fetch(proxyurl+compInfo[i]['url']);
-		// } else {
-		// 	var response=await fetch(compInfo[i]['url']);
-		// };
-		// var data=await response.json();
-		// console.log(compInfo[i]);
-		// var features=data;
-		// compInfo[i]['layers'].forEach(key=>{
-		// 	features=features[key];
-		// });
-		var compName=compInfo[i]['name']
-		// var censusCount=countCensus(features, censusFeatures);
-		// var diff=calcDiff(censusCount, record[compName]['censusCount']);
-		// console.log(diff);
-
-		var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
 		// record[compName]['censusCount']=diff;
-		record[compName]['features']=features;
-		record[compName]['count']=features.length;
-		record[compName]['remFeatures']=remFeatures;
-		record[compName]['remCount']=remFeatures.length;
 		// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
-		record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
-		record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 	};
 	console.log('Bikes Updated');
 };
@@ -462,7 +452,7 @@ function plotHists(loc, chartTitle, povCountList, othersCountList){
 			    family: 'Courier New, monospace',
       			size: 10
 			}, 
-			text: `${chartTitle} out of ${othersCountList.length+povCountList.length} Sites`
+			text: `${chartTitle} out of ${(othersCountList.length+povCountList.length)/2} Sites`
 		},
 		barmode: 'overlay',
 		hovermode: false
