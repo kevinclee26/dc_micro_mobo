@@ -205,19 +205,37 @@ async function bikeUpdate(){
 	for (i=0; i<compInfo.length; i++){
 		// var proxyurl='';
 		console.log(`Attempting ${compInfo[i]['name']}`)
+		try {
+			if (compInfo[i]['proxy']){
+				// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
+				var response=await fetch(proxyurl+compInfo[i]['url']);
+			} else {
+				var response=await fetch(compInfo[i]['url']);
+			};
+				// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');	
+			var data=await response.json();
+			var features=data;
+			compInfo[i]['layers'].forEach(key=>{
+				features=features[key];
+			});
+		} catch (e) {
+			// console.error(e);
+			console.log(`Failed ${compInfo[i]['name']}`);
+			var features=[];
+		}
 		// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
-		if (compInfo[i]['proxy']){
-			// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
-			var response=await fetch(proxyurl+compInfo[i]['url']);
-		} else {
-			var response=await fetch(compInfo[i]['url']);
-		};
-		var data=await response.json();
+		// if (compInfo[i]['proxy']){
+		// 	// var response=await fetch(proxyurl+compInfo[i]['url']+'_'+(timeCount%2)+'.json');
+		// 	var response=await fetch(proxyurl+compInfo[i]['url']);
+		// } else {
+		// 	var response=await fetch(compInfo[i]['url']);
+		// };
+		// var data=await response.json();
 		// console.log(compInfo[i]);
-		var features=data;
-		compInfo[i]['layers'].forEach(key=>{
-			features=features[key];
-		});
+		// var features=data;
+		// compInfo[i]['layers'].forEach(key=>{
+		// 	features=features[key];
+		// });
 		var compName=compInfo[i]['name']
 		// var censusCount=countCensus(features, censusFeatures);
 		// var diff=calcDiff(censusCount, record[compName]['censusCount']);
