@@ -132,7 +132,7 @@ function countCensus(features, census){ //features need to be in [[lat, lon]]
 		features.forEach(feature=>{
 			// console.log(feature.split(',').map(parseFloat));
 			// var featureTracts=census.filter(tract=>inside(feature.split(',').map(parseFloat), L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true); //this has a bug
-			var featureTracts=census.filter(tract=>inside(feature.map(parseFloat), L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
+			var featureTracts=census.filter(tract=>inside(feature.split(',').map(parseFloat), L.GeoJSON.coordsToLatLngs(tract['geometry']['rings'][0]))==true);
 			// console.log(featureTracts);
 			featureTracts.forEach(tract=>{
 			var tractId=tract['attributes']['TRACTID']
@@ -224,25 +224,20 @@ async function bikeUpdate(){
 			compInfo[i]['layers'].forEach(key=>{
 				features=features[key];
 			});
-			// featuresStr=features.map(feature=>[parseFloat(feature['lat']), parseFloat(feature['lon'])].join(','));
-			// featuresStrTrunc=features.map(feature=>[parseFloat(feature['lat']).toFixed(2), parseFloat(feature['lon']).toFixed(2)].join(','));
+			featuresStr=features.map(feature=>[parseFloat(feature['lat']), parseFloat(feature['lon'])].join(','));
+			featuresStrTrunc=features.map(feature=>[parseFloat(feature['lat']).toFixed(2), parseFloat(feature['lon']).toFixed(2)].join(','));
 			// var remFeatures=calcDiff(record[compName]['features'].map(feature=>[feature['lat'], feature['lon']].join(',')), features.map(feature=>[feature['lat'], feature['lon']]));
-			// var remFeatures=calcDiffStr(record[compName]['featuresTrunc'], featuresStrTrunc);
-			featuresLatLon=features.map(feature=>[feature['lat'], feature['lon']]);
-			var remFeatures=calcDiffDist(record[compName]['features'], featuresLatLon);
-			// console.log(features);
+			var remFeatures=calcDiffStr(record[compName]['featuresTrunc'], featuresStrTrunc);
 			// var [newFeatures, remFeatures]=calcDifference(features, record[compName]['features']);
-			// console.log(remFeatures);
-			record[compName]['features']=featuresLatLon;
-			// record[compName]['featuresTrunc']=featuresStrTrunc;
-			record[compName]['count']=featuresLatLon.length;
+			record[compName]['features']=featuresStr;
+			record[compName]['featuresTrunc']=featuresStrTrunc;
+			record[compName]['count']=featuresStr.length;
 			record[compName]['remFeatures']=remFeatures;
 			record[compName]['remCount']=remFeatures.length;
 			// record[compName]['remCount_2']=Object.entries(diff).map(tract=>tract[1]).reduce((a, b)=>a+b, 0);
 			record[compName]['remCensus']=countCensus(remFeatures, censusFeatures);
 			record[compName]['allCensus']=combineObj(record[compName]['allCensus'], record[compName]['remCensus'])
 		} catch (e) {
-			console.error(e);
 			console.log(`Failed ${compInfo[i]['name']}`);
 			record[compName]['features']=[];
 			record[compName]['count']=0;
@@ -268,11 +263,10 @@ function calcDiffDist(a, b){
 				lowest=idx;
 			};
 		});
-		if (distanceList[lowest]<100){ //97 meters is threshold
+		if (distanceList[lowest]<50){ //97 meters is threshold
 			a.splice(lowest, 1);
 		};
 	});
-	return a;
 };
 
 function calcDiffStr(a, b){ //a is new and b is old
@@ -300,7 +294,7 @@ function makeBikesFilter(circleCenterLatitude, circleCenterLongitude, circleRadi
 	return function bikesWithinCircle(bike){
 		// var bike_lat, var bike_lon=bike.split(',').map(parseFloat);
 		var bike_lat, bike_lon
-		[bike_lat, bike_lon]=bike
+		[bike_lat, bike_lon]=bike.split(',').map(parseFloat)
 		// return distance(circleCenterLatitude, circleCenterLongitude, bike['lat'], bike['lon'])<=circleRadiusInKm;
 		return distance(circleCenterLatitude, circleCenterLongitude, bike_lat, bike_lon)<=circleRadiusInKm;
 	};
@@ -318,7 +312,7 @@ function updateBikeMap(pov){
 	var bikeMarkers=[];
 	for (var i=0; i<bikes.length; i++) {
 	  	// bikeMarkers.push(L.marker([bikes[i]['lat'], bikes[i]['lon']], {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
-	  	bikeMarkers.push(L.marker(bikes[i].map(parseFloat), {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
+	  	bikeMarkers.push(L.marker(bikes[i].split(',').map(parseFloat), {icon: scooterIcon}));//.bindPopup("<h6>ID: " + bikes[i]['bike_id'] + "</h6>"));// + "</h6><h6>"  + bikes[i]['is_reserved'] + "</h6><h6>" + bikes[i]['is_disabled'] + "</h6>")
 	};
 	bikeLayer=L.layerGroup(bikeMarkers);
 	bikeLayer.addTo(map);
@@ -436,7 +430,7 @@ function resetWindow(ary){
 
 function updateCounter(){
 	var counterPanel=document.getElementById('counter');
-	counterPanel.innerHTML=`<h3>${(timeCount*timeInterval/60000).toFixed(0)} mins</h3>`;
+	counterPanel.innerHTML=`<h3>${(timeCount*timeInterval/60000).toFixed(2)} mins</h3>`;
 };
 
 function plotHists(loc, chartTitle, povCountList, othersCountList){
