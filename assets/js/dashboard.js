@@ -7,7 +7,7 @@ var othersCountList=[];
 var povRemCountList=[]
 var othersRemCountList=[];
 var timeFrame=20;
-var tableRecords=20;
+var tableRecords=15;
 compInfo.map(comp=>comp['name']).forEach(name=>record[name]={'features':[], 'censusCount':{}, 'featuresTrunc':[]});
 var timeInterval=60000;
 var prevFeatures=[];
@@ -347,7 +347,6 @@ function vcHist(pov){
 	plotHists('vcHist', 'VC Coverage', povVCList, othersVCList);
 };
 
-
 function metroHist(pov){
 	var povMetroList=[];
 	var othersMetroList=[];
@@ -388,7 +387,7 @@ bikeUpdate().then(()=>{
 	// timeCountList=resetWindow(timeCountList);
 	masterClock();
 	updateBikeMap('spin');
-	compBar('spin');
+	compChart('spin');
 	tallyCensus('spin');
 	metroHist('spin');
 	vcHist('spin');
@@ -409,7 +408,27 @@ function combineObj(a, b){
 	return a;
 }; 
 
-function compBar(pov){
+// function RVDLine(pov){
+// 	var povCount=record[pov]['count'];
+// 	var povRemCount=record[pov]['remCount'];
+// 	var povRVD=povRemCount.map((count, idx)=>count/povCount[idx]*60*24);// ride per vehicle per day - 60 mins per hour aand 24 hours per day
+// 	var othersCount=Object.entries(record).map(comp=>comp[1]['count']).reduce((a, b)=>a+b, 0)-povCount;
+// 	var othersRemCount=Object.entries(record).map(comp=>comp[1]['remCount']).reduce((a, b)=>a+b, 0)-povRemCount;
+// 	var povRVD=othersRemCount.map((count, idx)=>count/othersCount[idx]*60*24);
+// 	// compRecord['others']=Object.entries(record).filter(comp=>comp[0]!='spin').map(comp=>comp[1]).reduce((a,b)=>a+b, 0)
+// 	povCountList=resetWindow(povCountList);
+// 	othersCountList=resetWindow(othersCountList);
+// 	povCountList.push(povCount);
+// 	othersCountList.push(othersCount);
+// 	povRemCountList=resetWindow(povRemCountList);
+// 	othersRemCountList=resetWindow(othersRemCountList);
+// 	povRemCountList.push(povRemCount);
+// 	othersRemCountList.push(othersRemCount);
+// 	plotBars('totalBar', 'Total Available', povCountList, othersCountList);
+// 	plotBars('rentBar', 'Recently Unavailable (Rented)', povRemCountList, othersRemCountList);
+// };
+
+function compChart(pov){
 	var povCount=record[pov]['count'];
 	var povRemCount=record[pov]['remCount']
 	var othersCount=Object.entries(record).map(comp=>comp[1]['count']).reduce((a, b)=>a+b, 0)-povCount;
@@ -423,8 +442,11 @@ function compBar(pov){
 	othersRemCountList=resetWindow(othersRemCountList);
 	povRemCountList.push(povRemCount);
 	othersRemCountList.push(othersRemCount);
+	var povRVDList=povRemCountList.map((count, idx)=>count/(timeInterval/60000)*24*60/povCountList[idx]);
+	var othersRVDList=othersRemCountList.map((count, idx)=>count/(timeInterval/60000)*24*60/othersCountList[idx]);
 	plotBars('totalBar', 'Total Available', povCountList, othersCountList);
 	plotBars('rentBar', 'Recently Unavailable (Rented)', povRemCountList, othersRemCountList);
+	plotLines('rvd', 'Ride-Vehicle-Day', povRVDList, othersRVDList);
 };
 
 function resetWindow(ary){ 
@@ -436,7 +458,50 @@ function resetWindow(ary){
 
 function updateCounter(){
 	var counterPanel=document.getElementById('counter');
-	counterPanel.innerHTML=`<h3>${(timeCount*timeInterval/60000).toFixed(0)} mins</h3>`;
+	counterPanel.innerHTML=`<h4>${(timeCount*timeInterval/60000).toFixed(0)} mins</h4>`;
+};
+
+function plotLines(loc, chartTitle, povRVD, othersRVD){
+	var tracePov={
+		y: povRVD, 
+		x: timeList, 
+		type: 'line', 
+		marker: {
+			color: 'orange'
+		}
+	};
+	var traceOthers={
+		y: othersRVD, 
+		x: timeList, 
+		type: 'line', 
+		marker: {
+			color: 'blue'
+		}
+	};
+	var layout={
+		margin: {
+			't': 20, 
+			'b': 30, 
+			'l': 30, 
+			'r': 10, 
+			'pad': 0
+		}, 
+		font: {
+			'size': 10
+		}, 
+		title: {
+		    font: {
+			    family: 'Courier New, monospace',
+      			size: 10
+			}, 
+			text: `${chartTitle}`
+		},
+		xaxis: {
+			dtick: 300*1000/timeInterval
+		},
+		showlegend: false
+	};
+	Plotly.newPlot(loc, [tracePov, traceOthers], layout);
 };
 
 function plotHists(loc, chartTitle, povCountList, othersCountList){
@@ -617,7 +682,7 @@ setInterval(()=>{
 		.then(()=>{
 			masterClock();
 			updateBikeMap('spin');
-			compBar('spin', 'count');
+			compChart('spin', 'count');
 			tallyCensus('spin');
 			metroHist('spin');
 			vcHist('spin');
